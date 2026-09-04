@@ -19,7 +19,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              Play. Compete. Have Fun. Free instant browser gaming platform with no downloads or installs. 15+ curated games.
+              Play. Compete. Have Fun. Free instant browser gaming platform with no downloads or installs. 20+ curated games.
             </p>
           </div>
 
@@ -27,10 +27,11 @@ export default function Footer() {
           <div className="flex flex-col gap-2.5 text-xs sm:text-sm">
             <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-200 mb-1">Games</h4>
             <Link href="/games" className="text-zinc-400 hover:text-white transition-colors">All Games</Link>
-            <Link href="/games/tic-tac-toe" className="text-zinc-400 hover:text-white transition-colors">Tic Tac Toe</Link>
-            <Link href="/games/snake" className="text-zinc-400 hover:text-white transition-colors">Snake</Link>
-            <Link href="/games/2048" className="text-zinc-400 hover:text-white transition-colors">2048</Link>
-            <Link href="/games/minesweeper" className="text-zinc-400 hover:text-white transition-colors">Minesweeper</Link>
+            <Link href="/games/ludo" className="text-zinc-400 hover:text-white transition-colors">Ludo Master</Link>
+            <Link href="/games/tetris" className="text-zinc-400 hover:text-white transition-colors">Tetris Classic</Link>
+            <Link href="/games/solitaire" className="text-zinc-400 hover:text-white transition-colors">Solitaire</Link>
+            <Link href="/games/snake" className="text-zinc-400 hover:text-white transition-colors">Snake Retro</Link>
+            <Link href="/games/2048" className="text-zinc-400 hover:text-white transition-colors">2048 Puzzle</Link>
           </div>
 
           {/* Company Column */}

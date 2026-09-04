@@ -737,23 +737,23 @@ export default function Tetris() {
       </div>
 
       {/* Mobile Controls */}
-      <div className="flex gap-2 sm:hidden mt-2">
-        <button onPointerDown={moveLeft} className="w-12 h-12 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
+      <div className="grid grid-cols-6 gap-1.5 sm:hidden mt-2 w-full max-w-[340px]">
+        <button onPointerDown={moveLeft} aria-label="Move Left" className="h-11 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
           <ArrowLeft className="w-5 h-5 text-zinc-300" />
         </button>
-        <button onPointerDown={rotate} className="w-12 h-12 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
+        <button onPointerDown={rotate} aria-label="Rotate" className="h-11 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
           <RotateCw className="w-5 h-5 text-zinc-300" />
         </button>
-        <button onPointerDown={moveDown} className="w-12 h-12 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
+        <button onPointerDown={moveDown} aria-label="Soft Drop" className="h-11 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
           <ArrowDown className="w-5 h-5 text-zinc-300" />
         </button>
-        <button onPointerDown={moveRight} className="w-12 h-12 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
+        <button onPointerDown={moveRight} aria-label="Move Right" className="h-11 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors">
           <ArrowRight className="w-5 h-5 text-zinc-300" />
         </button>
-        <button onPointerDown={hardDrop} className="w-12 h-12 rounded-xl bg-cyan-800/60 border border-cyan-500/30 flex items-center justify-center active:bg-cyan-700/60 transition-colors text-[10px] font-bold text-cyan-300">
+        <button onPointerDown={hardDrop} aria-label="Hard Drop" className="h-11 rounded-xl bg-cyan-800/60 border border-cyan-500/30 flex items-center justify-center active:bg-cyan-700/60 transition-colors text-[10px] font-bold text-cyan-300">
           DROP
         </button>
-        <button onPointerDown={doHold} className="w-12 h-12 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors text-[10px] font-bold text-zinc-400">
+        <button onPointerDown={doHold} aria-label="Hold Piece" className="h-11 rounded-xl bg-zinc-800 border border-white/10 flex items-center justify-center active:bg-zinc-700 transition-colors text-[10px] font-bold text-zinc-400">
           HOLD
         </button>
       </div>
