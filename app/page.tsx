@@ -11,6 +11,7 @@ import Container from '@/components/Container';
 import SectionHeader from '@/components/SectionHeader';
 import AdBanner from '@/components/AdBanner';
 import GameThumbnail from '@/components/GameThumbnail';
+import SeoContentSection from '@/components/SeoContentSection';
 import { games } from '@/lib/games';
 import { getRecentlyPlayed, RecentGame } from '@/lib/storage';
 
@@ -123,6 +124,9 @@ export default function Home() {
           />
           <GameGrid games={games.slice(0, 8)} />
         </section>
+
+        {/* 9. High-Authority SEO & FAQ Section */}
+        <SeoContentSection />
       </Container>
     </div>
   );

@@ -3,9 +3,19 @@ import { ArrowRight } from 'lucide-react';
 import Container from '@/components/Container';
 import { categories, games } from '@/lib/games';
 
-export const metadata = {
-  title: 'Categories — GamesZone',
-  description: 'Explore web browser games by category: Arcade, Puzzle, Board, Classic, Strategy, Multiplayer, and more.',
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Game Categories — Arcade, Puzzle, Board, Classic & Card Games',
+  description: 'Explore free browser games by genre: Arcade, Puzzle, Board, Classic, Strategy, Card, and Casual. Play instantly with zero downloads.',
+  alternates: {
+    canonical: 'https://gameszonebynatsu.vercel.app/categories',
+  },
+  openGraph: {
+    title: 'Free Browser Game Categories | GamesZone',
+    description: 'Browse 20+ free online games by category. Puzzle, Arcade, Board, Card, and Action games.',
+    url: 'https://gameszonebynatsu.vercel.app/categories',
+  },
 };
 
 export default function CategoriesPage() {
