@@ -548,6 +548,66 @@ export default function Ludo() {
   const isCurrentBot = mode === 'vs-bot' && currentColor !== 'red';
   const canRollNow = !hasRolled && !isRolling && !movingTokenId && !winner && !isCurrentBot;
 
+  const renderYardContent = (color: PlayerColor) => {
+    const isTurn = currentColor === color;
+    const isBot = mode === 'vs-bot' && color !== 'red';
+    const canRoll = isTurn && !hasRolled && !isRolling && !movingTokenId && !winner && !isBot;
+    const isColorActive = activePlayers.includes(color);
+
+    return (
+      <div className="relative w-full h-full bg-white rounded-2xl border-2 border-slate-900 flex items-center justify-center shadow-inner overflow-hidden">
+        {/* 4 Corner Pockets for Tokens in Yard */}
+        <div className="w-full h-full grid grid-cols-2 grid-rows-2 p-1.5 sm:p-2 gap-1.5 sm:gap-2">
+          {YARD_POCKETS[color].map((_, idx) => (
+            <div
+              key={idx}
+              className={`rounded-full border-2 flex items-center justify-center shadow-inner ${
+                color === 'red' ? 'bg-rose-100 border-[#EF3340]' :
+                color === 'green' ? 'bg-emerald-100 border-[#10B981]' :
+                color === 'yellow' ? 'bg-amber-100 border-[#FBBF24]' :
+                'bg-blue-100 border-[#3B82F6]'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Dynamic Turn Dice Hub - Appears ONLY when it is this color's turn */}
+        {isTurn && isColorActive && !winner && (
+          <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex flex-col items-center justify-center p-1 z-25 animate-in zoom-in-90 duration-200">
+            <button
+              onClick={rollDice}
+              disabled={!canRoll}
+              aria-label={`Roll ${PLAYER_COLORS[color].name} Dice`}
+              className={`flex flex-col items-center justify-center transition-all ${
+                canRoll ? 'cursor-pointer hover:scale-110 active:scale-95' : 'cursor-default'
+              }`}
+            >
+              {renderDiceFace(diceValue, 'w-10 h-10 sm:w-13 sm:h-13')}
+              <span
+                className="mt-1 text-[7px] sm:text-[9px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-full shadow-lg whitespace-nowrap animate-bounce border border-white/60"
+                style={{ backgroundColor: PLAYER_COLORS[color].primary }}
+              >
+                {isRolling ? 'ROLLING...' : hasRolled ? `ROLLED ${diceValue}` : isBot ? 'BOT...' : 'TAP TO ROLL'}
+              </span>
+            </button>
+          </div>
+        )}
+
+        {/* Inactive Player Label Badge when not their turn */}
+        {(!isTurn || !isColorActive) && (
+          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+            <div
+              className="px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-black text-white uppercase tracking-wider shadow-md opacity-85 border border-white/40"
+              style={{ backgroundColor: PLAYER_COLORS[color].primary }}
+            >
+              {PLAYER_COLORS[color].name}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col items-center gap-4 w-full max-w-2xl mx-auto select-none px-2">
       
@@ -654,15 +714,8 @@ export default function Ludo() {
         <div className="grid grid-cols-[repeat(15,minmax(0,1fr))] grid-rows-[repeat(15,minmax(0,1fr))] w-full h-full border-2 border-slate-900 bg-white">
           
           {/* Top-Left: Red Yard (6x6) */}
-          <div className="col-span-6 row-span-6 bg-[#EF3340] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center">
-            <div className="w-full h-full bg-white rounded-2xl border-2 border-slate-900 grid grid-cols-2 grid-rows-2 p-2 gap-2 shadow-inner">
-              {YARD_POCKETS.red.map((pocket, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-full bg-rose-100 border-2 border-[#EF3340] flex items-center justify-center shadow-inner"
-                />
-              ))}
-            </div>
+          <div className="col-span-6 row-span-6 bg-[#EF3340] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center relative">
+            {renderYardContent('red')}
           </div>
 
           {/* Top-Center Arm: Rows 0-5, Cols 6-8 (Green Home Column) */}
@@ -692,15 +745,8 @@ export default function Ludo() {
           </div>
 
           {/* Top-Right: Green Yard (6x6) */}
-          <div className="col-span-6 row-span-6 bg-[#10B981] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center">
-            <div className="w-full h-full bg-white rounded-2xl border-2 border-slate-900 grid grid-cols-2 grid-rows-2 p-2 gap-2 shadow-inner">
-              {YARD_POCKETS.green.map((pocket, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-full bg-emerald-100 border-2 border-[#10B981] flex items-center justify-center shadow-inner"
-                />
-              ))}
-            </div>
+          <div className="col-span-6 row-span-6 bg-[#10B981] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center relative">
+            {renderYardContent('green')}
           </div>
 
           {/* Left Arm: Rows 6-8, Cols 0-5 (Red Home Row) */}
@@ -729,7 +775,7 @@ export default function Ludo() {
             })}
           </div>
 
-          {/* Center 3x3 Home Triangle Section with Center Dice */}
+          {/* Center 3x3 Home Triangle Apex */}
           <div className="col-span-3 row-span-3 relative border-2 border-slate-900 bg-slate-950 overflow-hidden flex items-center justify-center">
             <svg viewBox="0 0 100 100" className="w-full h-full absolute inset-0">
               {/* Left Triangle (Red) */}
@@ -744,27 +790,10 @@ export default function Ludo() {
               <circle cx="50" cy="50" r="28" fill="#09090B" stroke="#FFFFFF" strokeWidth="2.5" opacity="0.95" />
             </svg>
 
-            {/* Interactive 3D Dice in Middle of Board */}
-            <button
-              onClick={rollDice}
-              disabled={!canRollNow}
-              aria-label="Roll Dice in Center"
-              className={`relative z-20 flex flex-col items-center justify-center transition-all ${
-                canRollNow ? 'cursor-pointer hover:scale-105 active:scale-95' : 'cursor-default'
-              }`}
-            >
-              {renderDiceFace(diceValue, 'w-10 h-10 sm:w-14 sm:h-14')}
-
-              {/* Dynamic Turn Badge Below Dice */}
-              {!hasRolled && !isRolling && !movingTokenId && !winner && (
-                <span
-                  className="absolute -bottom-3 sm:-bottom-4 text-[7px] sm:text-[9px] font-black uppercase tracking-wider text-white px-1.5 py-0.5 rounded-full shadow-lg whitespace-nowrap animate-bounce border border-white/60"
-                  style={{ backgroundColor: PLAYER_COLORS[currentColor].primary }}
-                >
-                  {isCurrentBot ? 'BOT...' : 'ROLL'}
-                </span>
-              )}
-            </button>
+            {/* Central Apex Emblem */}
+            <div className="relative z-10 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-900/90 border-2 border-amber-400 flex items-center justify-center text-amber-400 shadow-xl animate-pulse">
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-amber-300 fill-amber-400" />
+            </div>
           </div>
 
           {/* Right Arm: Rows 6-8, Cols 9-14 (Yellow Home Row) */}
@@ -794,15 +823,8 @@ export default function Ludo() {
           </div>
 
           {/* Bottom-Left: Blue Yard (6x6) */}
-          <div className="col-span-6 row-span-6 bg-[#3B82F6] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center">
-            <div className="w-full h-full bg-white rounded-2xl border-2 border-slate-900 grid grid-cols-2 grid-rows-2 p-2 gap-2 shadow-inner">
-              {YARD_POCKETS.blue.map((pocket, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-full bg-blue-100 border-2 border-[#3B82F6] flex items-center justify-center shadow-inner"
-                />
-              ))}
-            </div>
+          <div className="col-span-6 row-span-6 bg-[#3B82F6] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center relative">
+            {renderYardContent('blue')}
           </div>
 
           {/* Bottom-Center Arm: Rows 9-14, Cols 6-8 (Blue Home Column) */}
@@ -832,15 +854,8 @@ export default function Ludo() {
           </div>
 
           {/* Bottom-Right: Yellow Yard (6x6) */}
-          <div className="col-span-6 row-span-6 bg-[#FBBF24] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center">
-            <div className="w-full h-full bg-white rounded-2xl border-2 border-slate-900 grid grid-cols-2 grid-rows-2 p-2 gap-2 shadow-inner">
-              {YARD_POCKETS.yellow.map((pocket, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-full bg-amber-100 border-2 border-[#FBBF24] flex items-center justify-center shadow-inner"
-                />
-              ))}
-            </div>
+          <div className="col-span-6 row-span-6 bg-[#FBBF24] border-2 border-slate-900 p-2 sm:p-3 flex items-center justify-center relative">
+            {renderYardContent('yellow')}
           </div>
 
         </div>
@@ -929,7 +944,7 @@ export default function Ludo() {
 
       {/* Instructions helper */}
       <p className="text-xs text-gray-500 text-center">
-        💡 Tap the <strong className="text-gray-300">dice in the center</strong> to roll • Roll a <strong className="text-gray-300">6</strong> to exit home yard • Safe on stars ⭐
+        💡 Tap the <strong className="text-gray-300">dice inside your corner yard</strong> when your turn arrives to roll • Roll a <strong className="text-gray-300">6</strong> to exit yard • Safe on stars ⭐
       </p>
 
     </div>
