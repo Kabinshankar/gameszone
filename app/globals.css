@@ -39,48 +39,116 @@
   --radius-xl: 20px;
 }
 
-/* ================= LIGHT MODE TOKENS & OVERRIDES ================= */
+/* ================= LIGHT MODE TOKENS & ULTRA-CLEAN PALETTE ================= */
 .light {
   --bg-base: #f8fafc;
-  --bg-surface: #f1f5f9;
+  --bg-surface: #ffffff;
   --bg-card: #ffffff;
-  --bg-elevated: #ffffff;
+  --bg-elevated: #f1f5f9;
 
   --border-default: #e2e8f0;
-  --border-subtle: #cbd5e1;
+  --border-subtle: #f1f5f9;
+  --border-hover: rgba(99, 102, 241, 0.5);
 
   --accent-primary: #4f46e5;
   --accent-primary-hover: #4338ca;
   --accent-primary-muted: rgba(79, 70, 229, 0.08);
 
   --text-primary: #0f172a;
-  --text-secondary: #475569;
+  --text-secondary: #334155;
   --text-muted: #64748b;
   --text-faint: #94a3b8;
+
+  color-scheme: light;
 }
 
+/* Light Mode Global Background & Base Typography */
 .light body {
-  background-color: var(--bg-base) !important;
-  color: var(--text-primary) !important;
+  background-color: #f8fafc !important;
+  color: #334155 !important;
 }
 
 .light header,
-.light nav,
-.light footer {
-  background-color: var(--bg-card) !important;
-  border-color: var(--border-default) !important;
+.light nav {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
-.light h1, .light h2, .light h3, .light h4, .light h5, .light h6,
-.light .text-white,
+.light footer {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Text Hierarchy in Light Mode */
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6 {
+  color: #0f172a !important;
+}
+
+.light p {
+  color: #334155;
+}
+
+/* Surface, Card & Container Overrides for Dark Hexes */
+.light [class*="bg-[#06060c]"],
+.light [class*="bg-[#09090b]"],
+.light [class*="bg-[#0c0c12]"],
+.light [class*="bg-[#111113]"],
+.light [class*="bg-[#111116]"],
+.light [class*="bg-[#121218]"],
+.light [class*="bg-[#131319]"],
+.light [class*="bg-[#14141a]"],
+.light [class*="bg-[#16161c]"],
+.light [class*="bg-[#181822]"],
+.light [class*="bg-[#101015]"],
+.light [class*="bg-[#0f0f15]"],
+.light [class*="bg-[#1a1a24]"],
+.light [class*="bg-[#1e1e26]"],
+.light .bg-zinc-900,
+.light .bg-zinc-950 {
+  background-color: #ffffff !important;
+  box-shadow: 0 4px 16px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+}
+
+.light [class*="bg-[#131319]"]:hover,
+.light [class*="bg-[#14141a]"]:hover,
+.light [class*="bg-[#181822]"]:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Light Mode Hero Section Gradient */
+.light section[class*="bg-gradient-to-b from-[#09090b]"],
+.light section[class*="from-[#09090b]"] {
+  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%) !important;
+}
+
+/* Subtle Inset / Pill Backgrounds */
+.light .bg-white\/5,
+.light .bg-white\/10,
+.light .bg-white\/\[0\.03\],
+.light .bg-white\/\[0\.04\],
+.light .bg-white\/\[0\.05\],
+.light .bg-white\/\[0\.06\],
+.light .bg-white\/\[0\.08\] {
+  background-color: #f1f5f9 !important;
+}
+
+/* Border Normalization in Light Mode */
+.light [class*="border-white"],
+.light .border-zinc-800,
+.light .border-zinc-700 {
+  border-color: #e2e8f0 !important;
+}
+
+/* Text Color Classes in Light Mode */
 .light .text-zinc-100,
 .light .text-zinc-200 {
-  color: #0f172a !important;
+  color: #1e293b !important;
 }
 
 .light .text-zinc-300,
 .light .text-zinc-400 {
-  color: #334155 !important;
+  color: #475569 !important;
 }
 
 .light .text-zinc-500 {
@@ -91,32 +159,58 @@
   color: #94a3b8 !important;
 }
 
-.light .bg-zinc-900,
-.light .bg-zinc-950,
-.light div[class*="bg-zinc"],
-.light section[class*="bg-zinc"] {
-  background-color: #ffffff !important;
-}
-
+/* Form Inputs & Controls */
 .light input,
-.light select {
+.light select,
+.light textarea {
   background-color: #ffffff !important;
   color: #0f172a !important;
   border-color: #cbd5e1 !important;
 }
 
-.light input::placeholder {
+.light input::placeholder,
+.light textarea::placeholder {
   color: #94a3b8 !important;
 }
 
-.light .border-zinc-800,
-.light .border-zinc-700 {
-  border-color: #e2e8f0 !important;
+.light input:focus,
+.light select:focus,
+.light textarea:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
 }
 
-.light .bg-indigo-600,
-.light .bg-indigo-600 * {
+/* Maintain Crisp White Text on Buttons & Filled Badges */
+.light .btn-primary,
+.light .btn-primary *,
+.light [class*="bg-gradient-to-r"],
+.light [class*="bg-indigo-600"],
+.light [class*="bg-indigo-600"] *,
+.light [class*="bg-indigo-500"],
+.light [class*="bg-indigo-500"] *,
+.light [class*="bg-purple-600"],
+.light [class*="bg-purple-600"] *,
+.light [class*="bg-emerald-600"],
+.light [class*="bg-emerald-600"] *,
+.light [class*="bg-rose-600"],
+.light [class*="bg-rose-600"] * {
   color: #ffffff !important;
+}
+
+/* Modals & Dialogs in Light Mode */
+.light .fixed.inset-0.bg-black\/80,
+.light .fixed.inset-0.bg-black\/85,
+.light .fixed.inset-0.bg-black\/90 {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* Scrollbar in Light Mode */
+.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* ============ BASE RESET ============ */
