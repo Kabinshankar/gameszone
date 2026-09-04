@@ -5,7 +5,8 @@ import { Sparkles, User, Lock, ArrowRight, ShieldCheck, Check, Gift } from 'luci
 import { getCurrentProfile, registerAccount, loginAccount, SHOP_AVATARS, saveProfile } from '@/lib/profile';
 import { sound } from '@/lib/audio';
 
-const FIRST_VISIT_KEY = 'gameszone_onboarding_completed_v1';
+const FIRST_VISIT_KEY = 'nexvara_onboarding_completed_v1';
+const LEGACY_FIRST_VISIT_KEY = 'gameszone_onboarding_completed_v1';
 
 export default function WelcomeOnboardingModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,7 @@ export default function WelcomeOnboardingModal() {
   useEffect(() => {
     // Check if user has seen first-time onboarding
     if (typeof window !== 'undefined') {
-      const seen = localStorage.getItem(FIRST_VISIT_KEY);
+      const seen = localStorage.getItem(FIRST_VISIT_KEY) || localStorage.getItem(LEGACY_FIRST_VISIT_KEY);
       if (!seen) {
         // Small delay for smooth entrance after page load
         const timer = setTimeout(() => {
@@ -100,7 +101,7 @@ export default function WelcomeOnboardingModal() {
         {/* Brand Icon & Heading */}
         <div className="flex flex-col items-center text-center gap-1.5 mb-6 z-10">
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            Welcome to Games<span className="text-indigo-400">Zone</span>
+            Welcome to Nex<span className="text-indigo-400">vara</span>
           </h2>
           <p className="text-xs sm:text-sm text-zinc-400 max-w-sm">
             Create your player profile to unlock 20+ instant browser games, earn reward coins, and play multiplayer with friends!

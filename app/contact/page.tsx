@@ -38,7 +38,7 @@ export default function ContactPage() {
             </div>
             <h3 className="text-2xl font-bold text-white">Message Received!</h3>
             <p className="text-sm text-gray-400 max-w-sm">
-              Thank you for contacting GamesZone. We appreciate your feedback and will review your message soon.
+              Thank you for contacting Nexvara. We appreciate your feedback and will review your message soon.
             </p>
             <button
               onClick={() => { setSubmitted(false); setFormData({ name: '', email: '', message: '' }); }}
