@@ -1,3 +1,5 @@
+import { hashPassword, encryptData, decryptData } from './crypto';
+
 export interface AvatarItem {
   id: string;
   name: string;
@@ -40,6 +42,7 @@ export interface UserProfile {
   id: string;
   username: string;
   isGuest: boolean;
+  role: 'admin' | 'user';
   avatar: string;
   banner: string;
   frame: string;
@@ -55,6 +58,7 @@ export interface UserProfile {
   createdAt: string;
   lastDailyReward?: string;
   dailyStreak: number;
+  encryptedEmail?: string;
 }
 
 // ── CATALOG ITEMS ──────────────────────────────────────────────────
@@ -100,10 +104,8 @@ export const SHOP_TITLES: TitleItem[] = [
   { id: 'title_legend', name: 'Living Legend', price: 1000, description: 'The absolute pinnacle of gaming prowess.', rarity: 'Legendary', color: 'text-yellow-400' },
 ];
 
-// ── LOCAL STORAGE HELPERS ──────────────────────────────────────────
-
 const USER_STORAGE_KEY = 'gameszone_user_profile_v1';
-const USERS_DB_KEY = 'gameszone_users_accounts_v1';
+const USERS_DB_KEY = 'gameszone_users_encrypted_db_v1';
 
 export function getInitialGuestProfile(): UserProfile {
   const randomNum = Math.floor(1000 + Math.random() * 9000);
@@ -111,11 +113,12 @@ export function getInitialGuestProfile(): UserProfile {
     id: `guest_${Date.now()}_${randomNum}`,
     username: `Player_${randomNum}`,
     isGuest: true,
+    role: 'user',
     avatar: 'avatar_default',
     banner: 'banner_default',
     frame: 'frame_default',
     title: 'title_rookie',
-    coins: 100, // Starter Welcome Coins!
+    coins: 100,
     xp: 0,
     level: 1,
     wins: 0,
@@ -148,7 +151,6 @@ export function saveProfile(profile: UserProfile): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
-    // Dispatch a custom event so all open components / tabs update immediately
     window.dispatchEvent(new CustomEvent('gameszone_profile_updated', { detail: profile }));
   } catch (e) {
     console.error('Error saving profile:', e);
@@ -181,7 +183,6 @@ export function awardMatchReward(isWin: boolean, isMultiplayer = false): {
   const newStreak = isWin ? profile.winStreak + 1 : 0;
   const bestStreak = Math.max(profile.bestStreak, newStreak);
 
-  // Bonus coins if leveled up!
   const levelUpBonus = newLevel > prevLevel ? (newLevel - prevLevel) * 100 : 0;
 
   const updated: UserProfile = {
@@ -228,7 +229,6 @@ export function buyShopItem(itemId: string, itemType: 'avatar' | 'banner' | 'fra
     ...profile,
     coins: profile.coins - price,
     inventory: [...profile.inventory, itemId],
-    // Auto equip upon purchase
     ...(itemType === 'avatar' ? { avatar: itemId } : {}),
     ...(itemType === 'banner' ? { banner: itemId } : {}),
     ...(itemType === 'frame' ? { frame: itemId } : {}),
@@ -254,54 +254,227 @@ export function equipItem(itemId: string, itemType: 'avatar' | 'banner' | 'frame
   saveProfile(updated);
 }
 
-// ── AUTH ACCOUNTS REGISTER / LOGIN ─────────────────────────────────
+// ── ENCRYPTED USER DATABASE & AUTH ─────────────────────────────────
 
-export function registerAccount(username: string, passwordHash: string, avatarId = 'avatar_default'): { success: boolean; message: string } {
-  if (typeof window === 'undefined') return { success: false, message: 'Client only' };
+export interface EncryptedUserRecord {
+  username: string;
+  passwordHash: string;
+  encryptedProfile: string; // AES-GCM Encrypted JSON string of UserProfile
+  role: 'admin' | 'user';
+  createdAt: string;
+}
+
+// Seed the Master Admin Account automatically if database is fresh
+export async function ensureAdminAccount(): Promise<void> {
+  if (typeof window === 'undefined') return;
 
   try {
     const raw = localStorage.getItem(USERS_DB_KEY);
-    const db: Record<string, { passwordHash: string; profile: UserProfile }> = raw ? JSON.parse(raw) : {};
+    const db: Record<string, EncryptedUserRecord> = raw ? JSON.parse(raw) : {};
 
-    if (db[username.toLowerCase()]) {
-      return { success: false, message: 'Username already taken. Please choose another.' };
+    if (!db['admin']) {
+      const adminPassHash = await hashPassword('admin123'); // Default master admin password
+
+      const allItems = [
+        ...SHOP_AVATARS.map((a) => a.id),
+        ...SHOP_BANNERS.map((b) => b.id),
+        ...SHOP_FRAMES.map((f) => f.id),
+        ...SHOP_TITLES.map((t) => t.id),
+      ];
+
+      const adminProfile: UserProfile = {
+        id: 'usr_admin_master',
+        username: 'Admin',
+        isGuest: false,
+        role: 'admin',
+        avatar: 'avatar_king',
+        banner: 'banner_gold',
+        frame: 'frame_gold_crown',
+        title: 'title_legend',
+        coins: 99999, // Max Coins for Admin
+        xp: 15000,
+        level: 50,
+        wins: 100,
+        totalGames: 105,
+        winStreak: 25,
+        bestStreak: 25,
+        inventory: allItems,
+        createdAt: new Date().toISOString(),
+        dailyStreak: 30,
+      };
+
+      const encrypted = await encryptData(JSON.stringify(adminProfile));
+
+      db['admin'] = {
+        username: 'Admin',
+        passwordHash: adminPassHash,
+        encryptedProfile: encrypted,
+        role: 'admin',
+        createdAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
     }
-
-    const current = getCurrentProfile();
-    const newProfile: UserProfile = {
-      ...current,
-      id: `usr_${Date.now()}`,
-      username: username.trim(),
-      isGuest: false,
-      avatar: avatarId,
-      coins: current.coins + 200, // +200 bonus coins for creating an account!
-    };
-
-    db[username.toLowerCase()] = { passwordHash, profile: newProfile };
-    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
-    saveProfile(newProfile);
-
-    return { success: true, message: 'Account registered successfully! +200 Bonus Coins awarded.' };
-  } catch {
-    return { success: false, message: 'Registration failed.' };
+  } catch (e) {
+    console.error('Error seeding admin account:', e);
   }
 }
 
-export function loginAccount(username: string, passwordHash: string): { success: boolean; message: string } {
+export async function registerAccount(
+  username: string,
+  plainPassword: string,
+  avatarId = 'avatar_default',
+  email = ''
+): Promise<{ success: boolean; message: string }> {
   if (typeof window === 'undefined') return { success: false, message: 'Client only' };
 
   try {
+    await ensureAdminAccount();
     const raw = localStorage.getItem(USERS_DB_KEY);
-    const db: Record<string, { passwordHash: string; profile: UserProfile }> = raw ? JSON.parse(raw) : {};
+    const db: Record<string, EncryptedUserRecord> = raw ? JSON.parse(raw) : {};
 
-    const user = db[username.toLowerCase()];
-    if (!user || user.passwordHash !== passwordHash) {
-      return { success: false, message: 'Invalid username or password.' };
+    const cleanUsername = username.trim();
+    const key = cleanUsername.toLowerCase();
+
+    if (db[key]) {
+      return { success: false, message: 'Username is already taken. Please choose another.' };
     }
 
-    saveProfile(user.profile);
-    return { success: true, message: `Welcome back, ${user.profile.username}!` };
-  } catch {
+    const passwordHash = await hashPassword(plainPassword);
+    const current = getCurrentProfile();
+
+    const newProfile: UserProfile = {
+      ...current,
+      id: `usr_${Date.now()}`,
+      username: cleanUsername,
+      isGuest: false,
+      role: 'user',
+      avatar: avatarId,
+      coins: current.coins + 200, // +200 bonus coins on registration!
+      encryptedEmail: email ? await encryptData(email) : undefined,
+      createdAt: new Date().toISOString(),
+    };
+
+    const encryptedProfile = await encryptData(JSON.stringify(newProfile));
+
+    db[key] = {
+      username: cleanUsername,
+      passwordHash,
+      encryptedProfile,
+      role: 'user',
+      createdAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+    saveProfile(newProfile);
+
+    return { success: true, message: 'Account securely created! +200 Bonus Coins awarded.' };
+  } catch (e) {
+    console.error('Registration failed:', e);
+    return { success: false, message: 'Registration failed due to a system error.' };
+  }
+}
+
+export async function loginAccount(
+  username: string,
+  plainPassword: string
+): Promise<{ success: boolean; message: string; profile?: UserProfile }> {
+  if (typeof window === 'undefined') return { success: false, message: 'Client only' };
+
+  try {
+    await ensureAdminAccount();
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    const db: Record<string, EncryptedUserRecord> = raw ? JSON.parse(raw) : {};
+
+    const key = username.trim().toLowerCase();
+    const record = db[key];
+
+    if (!record) {
+      return { success: false, message: 'Account not found with this username.' };
+    }
+
+    const passwordHash = await hashPassword(plainPassword);
+    if (record.passwordHash !== passwordHash) {
+      return { success: false, message: 'Incorrect password.' };
+    }
+
+    const decryptedRaw = await decryptData(record.encryptedProfile);
+    const profile: UserProfile = JSON.parse(decryptedRaw);
+
+    saveProfile(profile);
+    return { success: true, message: `Welcome back, ${profile.username}!`, profile };
+  } catch (e) {
+    console.error('Login error:', e);
     return { success: false, message: 'Login failed.' };
+  }
+}
+
+// ── ADMIN DATABASE MANAGEMENT ──────────────────────────────────────
+
+export async function getAllUsersDecrypted(): Promise<UserProfile[]> {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    await ensureAdminAccount();
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    if (!raw) return [];
+    const db: Record<string, EncryptedUserRecord> = JSON.parse(raw);
+
+    const users: UserProfile[] = [];
+    for (const key of Object.keys(db)) {
+      try {
+        const decrypted = await decryptData(db[key].encryptedProfile);
+        users.push(JSON.parse(decrypted));
+      } catch (err) {
+        console.error(`Error decrypting user ${key}:`, err);
+      }
+    }
+    return users;
+  } catch {
+    return [];
+  }
+}
+
+export async function adminGrantCoins(username: string, amount: number): Promise<boolean> {
+  try {
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    if (!raw) return false;
+    const db: Record<string, EncryptedUserRecord> = JSON.parse(raw);
+    const key = username.toLowerCase();
+
+    if (!db[key]) return false;
+
+    const decrypted = await decryptData(db[key].encryptedProfile);
+    const profile: UserProfile = JSON.parse(decrypted);
+    profile.coins += amount;
+
+    db[key].encryptedProfile = await encryptData(JSON.stringify(profile));
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+
+    // If currently active user, update live profile
+    const current = getCurrentProfile();
+    if (current.username.toLowerCase() === key) {
+      saveProfile(profile);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function adminDeleteUser(username: string): boolean {
+  try {
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    if (!raw) return false;
+    const db: Record<string, EncryptedUserRecord> = JSON.parse(raw);
+    const key = username.toLowerCase();
+
+    if (key === 'admin') return false; // Prevent deleting master admin
+
+    delete db[key];
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+    return true;
+  } catch {
+    return false;
   }
 }

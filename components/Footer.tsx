@@ -53,7 +53,11 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-zinc-500 font-medium">
           <p>© 2026 GamesZone. All rights reserved.</p>
-          <p>Built for instant browser play.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/admin" className="hover:text-zinc-400 transition-colors">Admin Portal</Link>
+            <span>•</span>
+            <p>Built for instant browser play.</p>
+          </div>
         </div>
       </Container>
     </footer>

@@ -19,7 +19,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -34,7 +34,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setError('Username must be at least 3 characters.');
         return;
       }
-      const res = registerAccount(username, password, selectedAvatar);
+      const res = await registerAccount(username, password, selectedAvatar);
       if (res.success) {
         setSuccess(res.message);
         setTimeout(() => onClose(), 1200);
@@ -42,7 +42,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         setError(res.message);
       }
     } else {
-      const res = loginAccount(username, password);
+      const res = await loginAccount(username, password);
       if (res.success) {
         setSuccess(res.message);
         setTimeout(() => onClose(), 1200);

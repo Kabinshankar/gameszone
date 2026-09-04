@@ -4,6 +4,7 @@ import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import WelcomeOnboardingModal from '@/components/WelcomeOnboardingModal';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -146,6 +147,7 @@ export default function RootLayout({
         <Navbar />
         <main className="w-full flex-1 box-border">{children}</main>
         <Footer />
+        <WelcomeOnboardingModal />
       </body>
     </html>
   );
