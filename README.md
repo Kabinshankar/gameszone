@@ -2,7 +2,7 @@
 
 **Nexvara** is a high-performance, modern HTML5 web arcade featuring 20+ responsive games, local/online 2-player multiplayer, deterministic daily challenges, chapter-based achievement milestones, cosmetic shop inventory, and encrypted client-side account progression.
 
-🌐 **Live URL:** [https://gameszonebynatsu.vercel.app](https://gameszonebynatsu.vercel.app)
+🌐 **Live URL:** [https://nexvara.vercel.app](https://nexvara.vercel.app)
 
 ---
 

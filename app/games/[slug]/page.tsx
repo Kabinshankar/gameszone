@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = `Play ${game.name} Online Free - ${game.category.join(', ')} Game`;
   const description = `Play ${game.name} online for free directly in your browser. ${game.description} No download or install required. Supports mobile & desktop.`;
-  const url = `https://gameszonebynatsu.vercel.app/games/${game.slug}`;
+  const url = `https://nexvara.vercel.app/games/${game.slug}`;
 
   return {
     title,
@@ -75,7 +75,7 @@ export default async function IndividualGamePage({ params }: Props) {
         '@type': 'VideoGame',
         name: game.name,
         description: game.description,
-        url: `https://gameszonebynatsu.vercel.app/games/${game.slug}`,
+        url: `https://nexvara.vercel.app/games/${game.slug}`,
         genre: game.category,
         playMode: 'SinglePlayer',
         applicationCategory: 'Game',
@@ -101,19 +101,19 @@ export default async function IndividualGamePage({ params }: Props) {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://gameszonebynatsu.vercel.app',
+            item: 'https://nexvara.vercel.app',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Games',
-            item: 'https://gameszonebynatsu.vercel.app/games',
+            item: 'https://nexvara.vercel.app/games',
           },
           {
             '@type': 'ListItem',
             position: 3,
             name: game.name,
-            item: `https://gameszonebynatsu.vercel.app/games/${game.slug}`,
+            item: `https://nexvara.vercel.app/games/${game.slug}`,
           },
         ],
       },

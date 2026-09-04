@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   title: 'All Online Games — Play 20+ Free Browser Games',
   description: 'Browse our complete catalog of 20+ free online games. Play classic puzzle, arcade, card, board, and strategy games instantly on desktop and mobile.',
   alternates: {
-    canonical: 'https://gameszonebynatsu.vercel.app/games',
+    canonical: 'https://nexvara.vercel.app/games',
   },
   openGraph: {
     title: 'All Free Online Games | Nexvara Arcade',
     description: 'Explore 20+ free browser games with instant play. No downloads required.',
-    url: 'https://gameszonebynatsu.vercel.app/games',
+    url: 'https://nexvara.vercel.app/games',
   },
 };
 

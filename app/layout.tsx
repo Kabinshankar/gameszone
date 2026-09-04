@@ -30,7 +30,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://gameszonebynatsu.vercel.app'),
+  metadataBase: new URL('https://nexvara.vercel.app'),
   title: {
     default: 'Nexvara — Play Free Online Browser Games (No Download)',
     template: '%s | Nexvara',
@@ -65,12 +65,12 @@ export const metadata: Metadata = {
   publisher: 'Nexvara',
   applicationName: 'Nexvara',
   alternates: {
-    canonical: 'https://gameszonebynatsu.vercel.app',
+    canonical: 'https://nexvara.vercel.app',
   },
   openGraph: {
     title: 'Nexvara — Play Free Online Games (No Downloads)',
     description: 'Instant play 20+ high quality online arcade, puzzle, card, and action games in your browser.',
-    url: 'https://gameszonebynatsu.vercel.app',
+    url: 'https://nexvara.vercel.app',
     siteName: 'Nexvara',
     locale: 'en_US',
     type: 'website',
@@ -121,22 +121,22 @@ export default function RootLayout({
               '@graph': [
                 {
                   '@type': 'WebSite',
-                  '@id': 'https://gameszonebynatsu.vercel.app/#website',
-                  url: 'https://gameszonebynatsu.vercel.app',
+                  '@id': 'https://nexvara.vercel.app/#website',
+                  url: 'https://nexvara.vercel.app',
                   name: 'Nexvara',
                   description: 'Play 20+ free online browser games instantly with zero downloads required.',
                   potentialAction: {
                     '@type': 'SearchAction',
-                    target: 'https://gameszonebynatsu.vercel.app/games?search={search_term_string}',
+                    target: 'https://nexvara.vercel.app/games?search={search_term_string}',
                     'query-input': 'required name=search_term_string',
                   },
                 },
                 {
                   '@type': 'Organization',
-                  '@id': 'https://gameszonebynatsu.vercel.app/#organization',
+                  '@id': 'https://nexvara.vercel.app/#organization',
                   name: 'Nexvara',
-                  url: 'https://gameszonebynatsu.vercel.app',
-                  logo: 'https://gameszonebynatsu.vercel.app/favicon.ico',
+                  url: 'https://nexvara.vercel.app',
+                  logo: 'https://nexvara.vercel.app/favicon.ico',
                 },
               ],
             }),

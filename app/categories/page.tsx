@@ -9,12 +9,12 @@ export const metadata: Metadata = {
   title: 'Game Categories — Arcade, Puzzle, Board, Classic & Card Games',
   description: 'Explore free browser games by genre: Arcade, Puzzle, Board, Classic, Strategy, Card, and Casual. Play instantly with zero downloads.',
   alternates: {
-    canonical: 'https://gameszonebynatsu.vercel.app/categories',
+    canonical: 'https://nexvara.vercel.app/categories',
   },
   openGraph: {
     title: 'Free Browser Game Categories | Nexvara',
     description: 'Browse 20+ free online games by category. Puzzle, Arcade, Board, Card, and Action games.',
-    url: 'https://gameszonebynatsu.vercel.app/categories',
+    url: 'https://nexvara.vercel.app/categories',
   },
 };
 

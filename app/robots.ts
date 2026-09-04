@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://gameszonebynatsu.vercel.app';
+  const baseUrl = 'https://nexvara.vercel.app';
 
   return {
     rules: [

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { games, categories } from '@/lib/games';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://gameszonebynatsu.vercel.app';
+  const baseUrl = 'https://nexvara.vercel.app';
 
   const gameUrls: MetadataRoute.Sitemap = games.map((game) => ({
     url: `${baseUrl}/games/${game.slug}`,
