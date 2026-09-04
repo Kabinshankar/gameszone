@@ -2,11 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Maximize2, Minimize2, Heart, HelpCircle, Info } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, Heart, HelpCircle, Info, Wifi, Coins } from 'lucide-react';
 import { Game } from '@/lib/games';
 import { isFavorite, toggleFavorite } from '@/lib/storage';
 import AdBanner from './AdBanner';
 import GameCard from './GameCard';
+import MultiplayerModal from './MultiplayerModal';
+import RewardModal from './RewardModal';
+import { MultiplayerRoom } from '@/lib/multiplayer';
 
 interface GameShellProps {
   game: Game;
@@ -14,12 +17,24 @@ interface GameShellProps {
   relatedGames?: Game[];
 }
 
+const MULTIPLAYER_GAMES = ['tic-tac-toe', 'connect-four', 'rock-paper-scissors', 'checkers', 'pong', 'ludo'];
+
 export default function GameShell({ game, children, relatedGames }: GameShellProps) {
   const [fav, setFav] = useState(false);
   const [isFs, setIsFs] = useState(false);
+  const [multiplayerOpen, setMultiplayerOpen] = useState(false);
+  const [rewardOpen, setRewardOpen] = useState(false);
+  const [, setActiveRoom] = useState<MultiplayerRoom | null>(null);
 
   useEffect(() => {
     setFav(isFavorite(game.slug));
+
+    // Listen for custom trigger to award match rewards
+    const handleTriggerReward = (e: any) => {
+      setRewardOpen(true);
+    };
+    window.addEventListener('gameszone_trigger_reward', handleTriggerReward);
+    return () => window.removeEventListener('gameszone_trigger_reward', handleTriggerReward);
   }, [game.slug]);
 
   const handleFav = () => setFav(toggleFavorite(game.slug));
@@ -36,6 +51,8 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
     }
   };
 
+  const isMultiplayerSupported = MULTIPLAYER_GAMES.includes(game.slug) || game.players.includes('2');
+
   const diffColor = {
     Easy: 'text-emerald-400',
     Medium: 'text-amber-400',
@@ -45,6 +62,25 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-16 sm:pb-24 box-border flex flex-col gap-8">
+      {/* Multiplayer Connection Modal */}
+      <MultiplayerModal
+        isOpen={multiplayerOpen}
+        gameSlug={game.slug}
+        gameName={game.name}
+        onClose={() => setMultiplayerOpen(false)}
+        onConnected={(room) => {
+          setActiveRoom(room);
+          window.dispatchEvent(new CustomEvent('gameszone_multiplayer_connected', { detail: room }));
+        }}
+      />
+
+      {/* Match Reward Victory Modal */}
+      <RewardModal
+        isOpen={rewardOpen}
+        isWin={true}
+        onClose={() => setRewardOpen(false)}
+      />
+
       {/* Game Header */}
       <div className="w-full grid grid-cols-1 sm:grid-cols-[1fr_auto] items-center gap-4">
         <div>
@@ -62,10 +98,32 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
           </p>
         </div>
 
-        <div className="flex items-center gap-2 sm:self-center">
+        <div className="flex items-center gap-2 sm:self-center flex-wrap">
+          {/* Online Multiplayer Button */}
+          {isMultiplayerSupported && (
+            <button
+              onClick={() => setMultiplayerOpen(true)}
+              className="h-10 px-4 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 border border-cyan-500/40 text-cyan-300 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-md shadow-cyan-500/10 active:scale-95"
+            >
+              <Wifi className="w-4 h-4 text-cyan-400 animate-pulse" />
+              <span>Play Online (2P)</span>
+            </button>
+          )}
+
+          {/* Claim Coins Demo Button */}
+          <button
+            onClick={() => setRewardOpen(true)}
+            className="h-10 px-3.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+            title="Claim Match Reward Coins"
+          >
+            <Coins className="w-3.5 h-3.5 text-amber-400" />
+            <span>Claim Rewards</span>
+          </button>
+
+          {/* Favorite */}
           <button
             onClick={handleFav}
-            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
+            className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all cursor-pointer ${
               fav
                 ? 'text-rose-400 border-rose-500/30 bg-rose-500/10'
                 : 'text-zinc-400 hover:text-white border-white/10 bg-white/5 hover:bg-white/10'
@@ -74,9 +132,11 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
           >
             <Heart className={`w-4 h-4 ${fav ? 'fill-current' : ''}`} />
           </button>
+
+          {/* Fullscreen */}
           <button
             onClick={toggleFullscreen}
-            className="w-10 h-10 rounded-xl text-zinc-400 hover:text-white border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all"
+            className="w-10 h-10 rounded-xl text-zinc-400 hover:text-white border border-white/10 bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer"
             aria-label="Fullscreen"
           >
             {isFs ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -142,7 +202,7 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
               <span className="text-zinc-200 font-semibold">{game.players}</span>
             </li>
             <li className="text-zinc-500 text-xs pt-1 border-t border-white/5">
-              High scores save locally in your browser.
+              Wins award <strong className="text-amber-300">50-100 Coins</strong> to spend in the Shop!
             </li>
           </ul>
         </div>
