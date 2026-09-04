@@ -174,7 +174,7 @@ export default function AdminPage() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black text-white">GamesZone Administrator</h1>
+              <h1 className="text-2xl font-black text-white">Nexvara Administrator</h1>
               <span className="px-2.5 py-0.5 rounded-full bg-amber-400 text-black text-[10px] font-black uppercase tracking-wider">
                 Root Admin
               </span>
