@@ -80,6 +80,9 @@ export const metadata: Metadata = {
     },
   },
   category: 'games',
+  verification: {
+    google: 'google9dd3675bf0b7cdcf',
+  },
 };
 
 export default function RootLayout({
