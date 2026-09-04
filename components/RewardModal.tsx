@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Trophy, Coins, Zap, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Trophy, Coins, Zap, ShoppingBag, ArrowRight, Star, Award } from 'lucide-react';
 import { awardMatchReward, getCurrentProfile } from '@/lib/profile';
 import { sound } from '@/lib/audio';
 
@@ -10,22 +10,38 @@ interface RewardModalProps {
   isOpen: boolean;
   isWin: boolean;
   isMultiplayer?: boolean;
+  rewardDetails?: {
+    coinsEarned: number;
+    xpEarned: number;
+    leveledUp: boolean;
+    newLevel: number;
+    newCoins: number;
+    dailyChallengeCompleted?: boolean;
+    unlockedAchievements?: string[];
+  } | null;
   onClose: () => void;
 }
 
-export default function RewardModal({ isOpen, isWin, isMultiplayer = false, onClose }: RewardModalProps) {
+export default function RewardModal({ isOpen, isWin, isMultiplayer = false, rewardDetails, onClose }: RewardModalProps) {
   const [rewardData, setRewardData] = useState<{
     coinsEarned: number;
     xpEarned: number;
     leveledUp: boolean;
     newLevel: number;
     newCoins: number;
+    dailyChallengeCompleted?: boolean;
+    unlockedAchievements?: string[];
   } | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      const data = awardMatchReward(isWin, isMultiplayer);
-      setRewardData(data);
+      if (rewardDetails) {
+        setRewardData(rewardDetails);
+      } else {
+        const data = awardMatchReward(isWin, isMultiplayer);
+        setRewardData(data);
+      }
+      
       if (isWin) {
         sound.playWin();
       } else {
@@ -43,7 +59,7 @@ export default function RewardModal({ isOpen, isWin, isMultiplayer = false, onCl
         }
       } catch {}
     }
-  }, [isOpen, isWin, isMultiplayer]);
+  }, [isOpen, isWin, isMultiplayer, rewardDetails]);
 
   if (!isOpen || !rewardData) return null;
 
@@ -96,16 +112,30 @@ export default function RewardModal({ isOpen, isWin, isMultiplayer = false, onCl
           </div>
         </div>
 
+        {/* Daily Challenge Bonus */}
+        {rewardData.dailyChallengeCompleted && (
+          <div className="w-full mb-3 p-3 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
+            <Star className="w-4 h-4 text-amber-400" /> DAILY CHALLENGE COMPLETED! Bonus coins awarded!
+          </div>
+        )}
+
+        {/* Achievement Unlocked */}
+        {rewardData.unlockedAchievements && rewardData.unlockedAchievements.length > 0 && (
+          <div className="w-full mb-3 p-3 rounded-2xl bg-gradient-to-r from-amber-500/20 to-yellow-500/20 border border-amber-400/40 text-amber-200 text-xs font-bold flex items-center justify-center gap-2">
+            <Award className="w-4 h-4 text-amber-400" /> Achievement Unlocked: {rewardData.unlockedAchievements.join(', ')}!
+          </div>
+        )}
+
         {/* Level Up Notification */}
         {rewardData.leveledUp && (
-          <div className="w-full mb-6 p-3 rounded-2xl bg-gradient-to-r from-purple-600/30 to-indigo-600/30 border border-purple-500/40 text-purple-200 text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
+          <div className="w-full mb-4 p-3 rounded-2xl bg-gradient-to-r from-purple-600/30 to-indigo-600/30 border border-purple-500/40 text-purple-200 text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
             <Trophy className="w-4 h-4 text-yellow-300" /> LEVEL UP! You reached Level {rewardData.newLevel}!
           </div>
         )}
 
         {/* Balance Status */}
         <div className="text-xs text-zinc-400 mb-6">
-          Total Coins: <strong className="text-amber-300 font-mono font-bold">{rewardData.newCoins} 🪙</strong> • Level {profile.level}
+          Total Coins: <strong className="text-amber-300 font-mono font-bold">{rewardData.newCoins} 🪙</strong> • Level {rewardData.newLevel}
         </div>
 
         {/* Action Buttons */}

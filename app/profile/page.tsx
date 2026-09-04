@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Trophy, Flame, Coins, Zap, ShieldCheck, ShoppingBag, Edit3, Check, LogIn } from 'lucide-react';
+import { User, Trophy, Flame, Coins, Zap, ShieldCheck, ShoppingBag, Edit3, Check, LogIn, LogOut, Palette, Award } from 'lucide-react';
 import Container from '@/components/Container';
 import AuthModal from '@/components/AuthModal';
+import AchievementsPanel from '@/components/AchievementsPanel';
+import ThemeSelector from '@/components/ThemeSelector';
 import {
   getCurrentProfile,
   saveProfile,
+  logoutAccount,
   SHOP_AVATARS,
   SHOP_BANNERS,
   SHOP_FRAMES,
@@ -25,11 +28,23 @@ export default function ProfilePage() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [newName, setNewName] = useState('');
   const [authOpen, setAuthOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'achievements' | 'themes'>('overview');
 
   useEffect(() => {
     const handleUpdate = (e: any) => setProfile(e.detail || getCurrentProfile());
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key?.includes('profile') || e.key?.includes('user')) {
+        setProfile(getCurrentProfile());
+      }
+    };
+    window.addEventListener('nexvara_profile_updated', handleUpdate);
     window.addEventListener('gameszone_profile_updated', handleUpdate);
-    return () => window.removeEventListener('gameszone_profile_updated', handleUpdate);
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      window.removeEventListener('nexvara_profile_updated', handleUpdate);
+      window.removeEventListener('gameszone_profile_updated', handleUpdate);
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   const handleSaveName = () => {
@@ -38,6 +53,12 @@ export default function ProfilePage() {
       saveProfile(updated);
       setIsEditingName(false);
     }
+  };
+
+  const handleLogout = () => {
+    const newGuest = logoutAccount();
+    setProfile(newGuest);
+    sound.playPop();
   };
 
   const currentAvatar = SHOP_AVATARS.find((a) => a.id === profile.avatar) || SHOP_AVATARS[0];
@@ -124,21 +145,30 @@ export default function ProfilePage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-2.5 w-full sm:w-auto flex-wrap">
             {profile.isGuest ? (
               <button
                 onClick={() => setAuthOpen(true)}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 cursor-pointer"
+                className="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 cursor-pointer transition-transform active:scale-95"
               >
                 <LogIn className="w-4 h-4" /> Save Account / Sign Up
               </button>
             ) : (
-              <button
-                onClick={() => setAuthOpen(true)}
-                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
-              >
-                <User className="w-4 h-4 text-indigo-400" /> Switch Account
-              </button>
+              <>
+                <button
+                  onClick={() => setAuthOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <User className="w-4 h-4 text-indigo-400" /> Switch
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
+                  title="Log out of this account"
+                >
+                  <LogOut className="w-3.5 h-3.5" /> Logout
+                </button>
+              </>
             )}
 
             <Link
@@ -169,188 +199,241 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Stats Summary Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
-          <div className="flex items-center gap-2 text-amber-400 text-xs font-bold">
-            <Coins className="w-4 h-4" /> Reward Coins
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-amber-300 font-mono">
-            {profile.coins} 🪙
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
-          <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
-            <Trophy className="w-4 h-4" /> Total Wins
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-            {profile.wins}
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
-          <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold">
-            <Flame className="w-4 h-4" /> Current Streak
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-            {profile.winStreak} 🔥
-          </div>
-        </div>
-
-        <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
-          <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold">
-            <ShieldCheck className="w-4 h-4" /> Win Rate
-          </div>
-          <div className="text-2xl sm:text-3xl font-black text-white font-mono">
-            {winRate}%
-          </div>
-        </div>
+      {/* Navigation Sub-Tabs */}
+      <div className="flex items-center gap-2 p-1.5 bg-[#121218] border border-white/10 rounded-2xl">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'overview'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <User className="w-4 h-4" /> Overview & Inventory
+        </button>
+        <button
+          onClick={() => setActiveTab('achievements')}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'achievements'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <Award className="w-4 h-4 text-amber-400" /> Achievements & Badges
+        </button>
+        <button
+          onClick={() => setActiveTab('themes')}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+            activeTab === 'themes'
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              : 'text-zinc-400 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <Palette className="w-4 h-4 text-cyan-400" /> Themes & Styles
+        </button>
       </div>
 
-      {/* Daily Login Rewards Calendar Section */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 flex flex-col gap-5 shadow-xl relative overflow-hidden">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-xl text-amber-400 shadow-md">
-              🎁
-            </div>
-            <div>
-              <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
-                Daily Login Rewards
-                <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
-                  {profile.dailyStreak} Day Streak 🔥
-                </span>
-              </h2>
-              <p className="text-xs text-zinc-400">
-                Log in every day to claim bonus reward coins and XP. Reach Day 7 for the VIP 500 🪙 drop!
-              </p>
-            </div>
-          </div>
-
-          {canClaimDailyReward(profile.lastDailyReward) ? (
-            <button
-              onClick={() => {
-                const res = claimDailyReward();
-                if (res.success) {
-                  sound.playWin();
-                }
-              }}
-              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black text-xs font-black tracking-wide shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer animate-bounce shrink-0"
-            >
-              <Coins className="w-4 h-4" /> Claim Daily Gift Now!
-            </button>
-          ) : (
-            <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-400 text-xs font-bold flex items-center gap-2 shrink-0">
-              <Check className="w-4 h-4 text-emerald-400" /> Claimed Today (Returns Tomorrow)
-            </div>
-          )}
-        </div>
-
-        {/* 7-Day Rewards Track */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-2">
-          {DAILY_REWARDS.map((r) => {
-            const isCompleted = profile.dailyStreak >= r.day;
-            const isCurrent = profile.dailyStreak === r.day;
-            return (
-              <div
-                key={r.day}
-                className={`p-3.5 rounded-2xl border flex flex-col items-center gap-1.5 transition-all relative ${
-                  isCurrent
-                    ? 'bg-amber-500/15 border-amber-400 shadow-md shadow-amber-500/20 scale-102 ring-1 ring-amber-400'
-                    : isCompleted
-                    ? 'bg-emerald-500/10 border-emerald-500/30'
-                    : 'bg-white/5 border-white/10 opacity-70'
-                }`}
-              >
-                <span className="text-2xl">{r.icon}</span>
-                <span className="text-xs font-extrabold text-white">{r.label}</span>
-                <span className="text-[11px] font-mono font-bold text-amber-300">+{r.coins} 🪙</span>
-                <span className="text-[9px] text-zinc-400 font-semibold">+{r.xp} XP</span>
-                {isCompleted && (
-                  <span className="absolute top-2 right-2 text-[10px] text-emerald-400 font-bold">
-                    ✓
-                  </span>
-                )}
+      {/* TAB 1: OVERVIEW */}
+      {activeTab === 'overview' && (
+        <div className="flex flex-col gap-8">
+          {/* Stats Summary Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
+              <div className="flex items-center gap-2 text-amber-400 text-xs font-bold">
+                <Coins className="w-4 h-4" /> Reward Coins
               </div>
-            );
-          })}
-        </div>
-      </section>
+              <div className="text-2xl sm:text-3xl font-black text-amber-300 font-mono">
+                {profile.coins} 🪙
+              </div>
+            </div>
 
-      {/* Owned Inventory & Customizer */}
-      <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 flex flex-col gap-6 shadow-xl">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-extrabold text-white tracking-tight">
-            My Inventory & Closet
-          </h2>
-          <Link
-            href="/shop"
-            className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
-          >
-            <ShoppingBag className="w-3.5 h-3.5" /> Buy More Items
-          </Link>
-        </div>
+            <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
+              <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                <Trophy className="w-4 h-4" /> Total Wins
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                {profile.wins}
+              </div>
+            </div>
 
-        {/* Owned Avatars */}
-        <div className="flex flex-col gap-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-            Owned Avatars
-          </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-8 gap-3">
-            {SHOP_AVATARS.filter((a) => profile.inventory.includes(a.id)).map((av) => (
-              <button
-                key={av.id}
-                onClick={() => { equipItem(av.id, 'avatar'); sound.playPop(); }}
-                className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
-                  profile.avatar === av.id
-                    ? 'bg-indigo-600/30 border-indigo-500 shadow-lg'
-                    : 'bg-white/5 border-white/10 hover:bg-white/10'
-                }`}
-              >
-                <span className="text-3xl">{av.icon}</span>
-                <span className="text-[10px] font-bold text-zinc-300 truncate max-w-[70px]">{av.name}</span>
-                {profile.avatar === av.id && (
-                  <span className="text-[8px] bg-indigo-500 text-white px-1.5 py-0.5 rounded-full font-bold">
-                    Active
-                  </span>
-                )}
-              </button>
-            ))}
+            <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
+              <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold">
+                <Flame className="w-4 h-4" /> Current Streak
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                {profile.winStreak} 🔥
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#121218] border border-white/10 flex flex-col gap-1 shadow-md">
+              <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold">
+                <ShieldCheck className="w-4 h-4" /> Win Rate
+              </div>
+              <div className="text-2xl sm:text-3xl font-black text-white font-mono">
+                {winRate}%
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Owned Banners */}
-        <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-            Owned Profile Banners
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {SHOP_BANNERS.filter((b) => profile.inventory.includes(b.id)).map((bn) => (
-              <button
-                key={bn.id}
-                onClick={() => { equipItem(bn.id, 'banner'); sound.playPop(); }}
-                className={`h-20 rounded-2xl bg-gradient-to-r ${bn.gradient} border flex items-center justify-between px-4 transition-all cursor-pointer ${
-                  profile.banner === bn.id
-                    ? 'border-indigo-400 shadow-lg shadow-indigo-500/20 ring-2 ring-indigo-400'
-                    : 'border-white/10 hover:border-white/30'
-                }`}
+          {/* Daily Login Rewards Calendar Section */}
+          <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 flex flex-col gap-5 shadow-xl relative overflow-hidden">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-xl text-amber-400 shadow-md">
+                  🎁
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                    Daily Login Rewards
+                    <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                      {profile.dailyStreak} Day Streak 🔥
+                    </span>
+                  </h2>
+                  <p className="text-xs text-zinc-400">
+                    Log in every day to claim bonus reward coins and XP. Reach Day 7 for the VIP 500 🪙 drop!
+                  </p>
+                </div>
+              </div>
+
+              {canClaimDailyReward(profile.lastDailyReward) ? (
+                <button
+                  onClick={() => {
+                    const res = claimDailyReward();
+                    if (res.success) {
+                      sound.playWin();
+                    }
+                  }}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black text-xs font-black tracking-wide shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer animate-bounce shrink-0"
+                >
+                  <Coins className="w-4 h-4" /> Claim Daily Gift Now!
+                </button>
+              ) : (
+                <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-400 text-xs font-bold flex items-center gap-2 shrink-0">
+                  <Check className="w-4 h-4 text-emerald-400" /> Claimed Today (Returns Tomorrow)
+                </div>
+              )}
+            </div>
+
+            {/* 7-Day Rewards Track */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-2">
+              {DAILY_REWARDS.map((r) => {
+                const isCompleted = profile.dailyStreak >= r.day;
+                const isCurrent = profile.dailyStreak === r.day;
+                return (
+                  <div
+                    key={r.day}
+                    className={`p-3.5 rounded-2xl border flex flex-col items-center gap-1.5 transition-all relative ${
+                      isCurrent
+                        ? 'bg-amber-500/15 border-amber-400 shadow-md shadow-amber-500/20 scale-102 ring-1 ring-amber-400'
+                        : isCompleted
+                        ? 'bg-emerald-500/10 border-emerald-500/30'
+                        : 'bg-white/5 border-white/10 opacity-70'
+                    }`}
+                  >
+                    <span className="text-2xl">{r.icon}</span>
+                    <span className="text-xs font-extrabold text-white">{r.label}</span>
+                    <span className="text-[11px] font-mono font-bold text-amber-300">+{r.coins} 🪙</span>
+                    <span className="text-[9px] text-zinc-400 font-semibold">+{r.xp} XP</span>
+                    {isCompleted && (
+                      <span className="absolute top-2 right-2 text-[10px] text-emerald-400 font-bold">
+                        ✓
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Owned Inventory & Customizer */}
+          <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 flex flex-col gap-6 shadow-xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-extrabold text-white tracking-tight">
+                My Inventory & Closet
+              </h2>
+              <Link
+                href="/shop"
+                className="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1"
               >
-                <span className="text-xs font-black text-white drop-shadow-md">{bn.name}</span>
-                {profile.banner === bn.id ? (
-                  <span className="text-[9px] bg-indigo-600 text-white font-bold px-2 py-1 rounded-lg">
-                    Equipped
-                  </span>
-                ) : (
-                  <span className="text-[9px] bg-black/40 text-zinc-300 font-bold px-2 py-1 rounded-lg">
-                    Equip
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
+                <ShoppingBag className="w-3.5 h-3.5" /> Buy More Items
+              </Link>
+            </div>
+
+            {/* Owned Avatars */}
+            <div className="flex flex-col gap-3">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                Owned Avatars
+              </h3>
+              <div className="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                {SHOP_AVATARS.filter((a) => profile.inventory.includes(a.id)).map((av) => (
+                  <button
+                    key={av.id}
+                    onClick={() => { equipItem(av.id, 'avatar'); sound.playPop(); }}
+                    className={`p-3 rounded-2xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                      profile.avatar === av.id
+                        ? 'bg-indigo-600/30 border-indigo-500 shadow-lg'
+                        : 'bg-white/5 border-white/10 hover:bg-white/10'
+                    }`}
+                  >
+                    <span className="text-3xl">{av.icon}</span>
+                    <span className="text-[10px] font-bold text-zinc-300 truncate max-w-[70px]">{av.name}</span>
+                    {profile.avatar === av.id && (
+                      <span className="text-[8px] bg-indigo-500 text-white px-1.5 py-0.5 rounded-full font-bold">
+                        Active
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Owned Banners */}
+            <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                Owned Profile Banners
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {SHOP_BANNERS.filter((b) => profile.inventory.includes(b.id)).map((bn) => (
+                  <button
+                    key={bn.id}
+                    onClick={() => { equipItem(bn.id, 'banner'); sound.playPop(); }}
+                    className={`h-20 rounded-2xl bg-gradient-to-r ${bn.gradient} border flex items-center justify-between px-4 transition-all cursor-pointer ${
+                      profile.banner === bn.id
+                        ? 'border-indigo-400 shadow-lg shadow-indigo-500/20 ring-2 ring-indigo-400'
+                        : 'border-white/10 hover:border-white/30'
+                    }`}
+                  >
+                    <span className="text-xs font-black text-white drop-shadow-md">{bn.name}</span>
+                    {profile.banner === bn.id ? (
+                      <span className="text-[9px] bg-indigo-600 text-white font-bold px-2 py-1 rounded-lg">
+                        Equipped
+                      </span>
+                    ) : (
+                      <span className="text-[9px] bg-black/40 text-zinc-300 font-bold px-2 py-1 rounded-lg">
+                        Equip
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
+      )}
+
+      {/* TAB 2: ACHIEVEMENTS */}
+      {activeTab === 'achievements' && (
+        <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 shadow-xl">
+          <AchievementsPanel />
+        </section>
+      )}
+
+      {/* TAB 3: THEMES */}
+      {activeTab === 'themes' && (
+        <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 shadow-xl">
+          <ThemeSelector />
+        </section>
+      )}
     </Container>
   );
 }

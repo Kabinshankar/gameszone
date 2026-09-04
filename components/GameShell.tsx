@@ -5,10 +5,12 @@ import Link from 'next/link';
 import { ArrowLeft, Maximize2, Minimize2, Heart, HelpCircle, Info, Wifi, Coins } from 'lucide-react';
 import { Game } from '@/lib/games';
 import { isFavorite, toggleFavorite } from '@/lib/storage';
+import { getCurrentProfile, saveProfile } from '@/lib/profile';
 import AdBanner from './AdBanner';
 import GameCard from './GameCard';
 import MultiplayerModal from './MultiplayerModal';
 import RewardModal from './RewardModal';
+import AntifrustrationCard from './AntifrustrationCard';
 import { MultiplayerRoom } from '@/lib/multiplayer';
 
 interface GameShellProps {
@@ -24,6 +26,9 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
   const [isFs, setIsFs] = useState(false);
   const [multiplayerOpen, setMultiplayerOpen] = useState(false);
   const [rewardOpen, setRewardOpen] = useState(false);
+  const [rewardDetails, setRewardDetails] = useState<any>(null);
+  const [consecutiveLosses, setConsecutiveLosses] = useState(0);
+  const [showAntifrustration, setShowAntifrustration] = useState(false);
   const [, setActiveRoom] = useState<MultiplayerRoom | null>(null);
 
   useEffect(() => {
@@ -31,11 +36,38 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
 
     // Listen for custom trigger to award match rewards
     const handleTriggerReward = (e: any) => {
+      const details = e.detail;
+      setRewardDetails(details);
+      if (details) {
+        if (details.isWin) {
+          setConsecutiveLosses(0);
+          setShowAntifrustration(false);
+        } else {
+          setConsecutiveLosses((prev) => {
+            const next = prev + 1;
+            if (next >= 3) {
+              setShowAntifrustration(true);
+            }
+            return next;
+          });
+        }
+      }
       setRewardOpen(true);
     };
+
+    window.addEventListener('nexvara_game_reward', handleTriggerReward);
     window.addEventListener('gameszone_trigger_reward', handleTriggerReward);
-    return () => window.removeEventListener('gameszone_trigger_reward', handleTriggerReward);
+    return () => {
+      window.removeEventListener('nexvara_game_reward', handleTriggerReward);
+      window.removeEventListener('gameszone_trigger_reward', handleTriggerReward);
+    };
   }, [game.slug]);
+
+  const handleClaimConsolation = (amount: number) => {
+    const profile = getCurrentProfile();
+    const updated = { ...profile, coins: profile.coins + amount };
+    saveProfile(updated);
+  };
 
   const handleFav = () => setFav(toggleFavorite(game.slug));
 
@@ -62,6 +94,15 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
 
   return (
     <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-16 sm:pb-24 box-border flex flex-col gap-8">
+      {/* Anti-frustration Card */}
+      {showAntifrustration && (
+        <AntifrustrationCard
+          gameSlug={game.slug}
+          onDismiss={() => setShowAntifrustration(false)}
+          onClaimCoins={handleClaimConsolation}
+        />
+      )}
+
       {/* Multiplayer Connection Modal */}
       <MultiplayerModal
         isOpen={multiplayerOpen}
@@ -77,7 +118,8 @@ export default function GameShell({ game, children, relatedGames }: GameShellPro
       {/* Match Reward Victory Modal */}
       <RewardModal
         isOpen={rewardOpen}
-        isWin={true}
+        isWin={rewardDetails ? rewardDetails.isWin : true}
+        rewardDetails={rewardDetails}
         onClose={() => setRewardOpen(false)}
       />
 

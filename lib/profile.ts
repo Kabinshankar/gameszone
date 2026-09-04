@@ -75,7 +75,7 @@ export const SHOP_AVATARS: AvatarItem[] = [
   { id: 'avatar_phoenix', name: 'Immortal Phoenix', icon: '🦅', price: 600, description: 'Rises from defeat stronger than ever.', rarity: 'Legendary', color: '#f43f5e' },
   { id: 'avatar_ghost', name: 'Shadow Spectre', icon: '👻', price: 180, description: 'Haunting the leaderboards from the shadows.', rarity: 'Common', color: '#94a3b8' },
   { id: 'avatar_skull', name: 'Cyber Reaper', icon: '💀', price: 400, description: 'Feared in 1v1 online showdowns.', rarity: 'Epic', color: '#e11d48' },
-  { id: 'avatar_star', name: 'Supernova', icon: '⭐', price: 1000, description: 'The brightest star in the GamesZone cosmos.', rarity: 'Legendary', color: '#eab308' },
+  { id: 'avatar_star', name: 'Supernova', icon: '⭐', price: 1000, description: 'The brightest star in the Nexvara cosmos.', rarity: 'Legendary', color: '#eab308' },
 ];
 
 export const SHOP_BANNERS: BannerItem[] = [
@@ -96,7 +96,7 @@ export const SHOP_FRAMES: FrameItem[] = [
 ];
 
 export const SHOP_TITLES: TitleItem[] = [
-  { id: 'title_rookie', name: 'Casual Gamer', price: 0, description: 'Starting journey on GamesZone.', rarity: 'Common', color: 'text-zinc-400' },
+  { id: 'title_rookie', name: 'Casual Gamer', price: 0, description: 'Starting journey on Nexvara.', rarity: 'Common', color: 'text-zinc-400' },
   { id: 'title_master', name: 'Arcade Prodigy', price: 150, description: 'Consistently topping the leaderboards.', rarity: 'Rare', color: 'text-cyan-400' },
   { id: 'title_ludoking', name: 'Ludo Emperor', price: 250, description: 'Undefeated master of the 4 colors.', rarity: 'Rare', color: 'text-amber-400' },
   { id: 'title_speed', name: 'Speed Demon', price: 350, description: 'Blazing reflex and typing records.', rarity: 'Epic', color: 'text-emerald-400' },
@@ -104,8 +104,10 @@ export const SHOP_TITLES: TitleItem[] = [
   { id: 'title_legend', name: 'Living Legend', price: 1000, description: 'The absolute pinnacle of gaming prowess.', rarity: 'Legendary', color: 'text-yellow-400' },
 ];
 
-const USER_STORAGE_KEY = 'gameszone_user_profile_v1';
-const USERS_DB_KEY = 'gameszone_users_encrypted_db_v1';
+const USER_STORAGE_KEY = 'nexvara_user_profile_v1';
+const LEGACY_USER_STORAGE_KEY = 'gameszone_user_profile_v1';
+const USERS_DB_KEY = 'nexvara_users_encrypted_db_v1';
+const LEGACY_USERS_DB_KEY = 'gameszone_users_encrypted_db_v1';
 
 export function getInitialGuestProfile(): UserProfile {
   const randomNum = Math.floor(1000 + Math.random() * 9000);
@@ -135,15 +137,33 @@ export function getInitialGuestProfile(): UserProfile {
 export function getCurrentProfile(): UserProfile {
   if (typeof window === 'undefined') return getInitialGuestProfile();
   try {
-    const raw = localStorage.getItem(USER_STORAGE_KEY);
+    const raw = localStorage.getItem(USER_STORAGE_KEY) || localStorage.getItem(LEGACY_USER_STORAGE_KEY);
     if (!raw) {
       const guest = getInitialGuestProfile();
       localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(guest));
       return guest;
     }
-    return JSON.parse(raw);
+    const profile = JSON.parse(raw);
+    return profile;
   } catch {
     return getInitialGuestProfile();
+  }
+}
+
+// Asynchronously sync profile back to the encrypted database record
+export async function syncProfileToEncryptedDb(profile: UserProfile): Promise<void> {
+  if (typeof window === 'undefined' || profile.isGuest || !profile.username) return;
+  try {
+    const raw = localStorage.getItem(USERS_DB_KEY) || localStorage.getItem(LEGACY_USERS_DB_KEY);
+    if (!raw) return;
+    const db: Record<string, EncryptedUserRecord> = JSON.parse(raw);
+    const key = profile.username.trim().toLowerCase();
+    if (db[key]) {
+      db[key].encryptedProfile = await encryptData(JSON.stringify(profile));
+      localStorage.setItem(USERS_DB_KEY, JSON.stringify(db));
+    }
+  } catch (e) {
+    console.error('Error syncing profile to encrypted DB:', e);
   }
 }
 
@@ -151,10 +171,27 @@ export function saveProfile(profile: UserProfile): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
+    // Keep legacy key mirrored for backwards safety
+    localStorage.setItem(LEGACY_USER_STORAGE_KEY, JSON.stringify(profile));
+    
+    // If user is a registered account or admin, persist in encrypted database
+    if (!profile.isGuest && profile.username) {
+      syncProfileToEncryptedDb(profile);
+    }
+    
+    // Dispatch both events so all components update seamlessly
+    window.dispatchEvent(new CustomEvent('nexvara_profile_updated', { detail: profile }));
     window.dispatchEvent(new CustomEvent('gameszone_profile_updated', { detail: profile }));
   } catch (e) {
     console.error('Error saving profile:', e);
   }
+}
+
+export function logoutAccount(): UserProfile {
+  if (typeof window === 'undefined') return getInitialGuestProfile();
+  const guest = getInitialGuestProfile();
+  saveProfile(guest);
+  return guest;
 }
 
 // ── DAILY LOGIN REWARDS ────────────────────────────────────────────

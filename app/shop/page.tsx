@@ -23,8 +23,19 @@ export default function ShopPage() {
 
   useEffect(() => {
     const handleUpdate = (e: any) => setProfile(e.detail || getCurrentProfile());
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key?.includes('profile') || e.key?.includes('user')) {
+        setProfile(getCurrentProfile());
+      }
+    };
+    window.addEventListener('nexvara_profile_updated', handleUpdate);
     window.addEventListener('gameszone_profile_updated', handleUpdate);
-    return () => window.removeEventListener('gameszone_profile_updated', handleUpdate);
+    window.addEventListener('storage', handleStorage);
+    return () => {
+      window.removeEventListener('nexvara_profile_updated', handleUpdate);
+      window.removeEventListener('gameszone_profile_updated', handleUpdate);
+      window.removeEventListener('storage', handleStorage);
+    };
   }, []);
 
   const handleBuy = (itemId: string, itemType: 'avatar' | 'banner' | 'frame' | 'title') => {
