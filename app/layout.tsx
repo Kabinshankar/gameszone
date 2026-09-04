@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
 import Script from 'next/script';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -132,6 +133,7 @@ export default function RootLayout({
         <Navbar />
         <main className="w-full flex-1 box-border">{children}</main>
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
