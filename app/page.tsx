@@ -12,6 +12,7 @@ import SectionHeader from '@/components/SectionHeader';
 import AdBanner from '@/components/AdBanner';
 import GameThumbnail from '@/components/GameThumbnail';
 import SeoContentSection from '@/components/SeoContentSection';
+import DailyChallengeWidget from '@/components/DailyChallengeWidget';
 import { games } from '@/lib/games';
 import { getRecentlyPlayed, RecentGame } from '@/lib/storage';
 
@@ -83,7 +84,17 @@ export default function Home() {
           <FeaturedGameBanner game={featuredGame} />
         </section>
 
-        {/* 4. Top AdBanner */}
+        {/* 4. Daily Challenge Widget */}
+        <section>
+          <SectionHeader
+            icon={<Flame className="w-5 h-5 text-amber-400" />}
+            title="Today's Challenge"
+            subtitle="Complete the daily challenge to earn bonus coins."
+          />
+          <DailyChallengeWidget />
+        </section>
+
+        {/* 5. Top AdBanner */}
         <AdBanner slot="1000000001" className="my-2" />
 
         {/* 5. Popular Games */}

@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { Shield, Lock, Eye, Cookie, FileText } from 'lucide-react';
 
 export const metadata = {
-  title: 'Privacy Policy — GamesZone',
-  description: 'Privacy policy for GamesZone, covering data usage, cookies, local storage, and Google AdSense advertising.',
+  title: 'Privacy Policy — Nexvara',
+  description: 'Privacy policy for Nexvara, covering data usage, cookies, local storage, and Google AdSense advertising.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -23,7 +23,7 @@ export default function PrivacyPolicyPage() {
           <Lock className="w-5 h-5 text-purple-400" /> 1. Overview
         </h2>
         <p className="text-sm leading-relaxed">
-          Welcome to GamesZone ("we", "our", "us"). We are committed to protecting your privacy while you enjoy our free web browser games. This Privacy Policy explains how information is collected, used, and safeguarded when you visit our website.
+          Welcome to Nexvara ("we", "our", "us"). We are committed to protecting your privacy while you enjoy our free web browser games. This Privacy Policy explains how information is collected, used, and safeguarded when you visit our website.
         </p>
       </section>
 
@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
           <Eye className="w-5 h-5 text-cyan-400" /> 2. Data Collection & Local Storage
         </h2>
         <p className="text-sm leading-relaxed">
-          GamesZone does not require user registration, accounts, or personal data submission (such as name or email) to play any of our games.
+          Nexvara does not require user registration, accounts, or personal data submission (such as name or email) to play any of our games.
         </p>
         <p className="text-sm leading-relaxed">
           We use browser <code className="bg-white/10 px-2 py-0.5 rounded text-purple-300">localStorage</code> exclusively on your device to store game state information, such as:
@@ -53,7 +53,7 @@ export default function PrivacyPolicyPage() {
           <Cookie className="w-5 h-5 text-amber-400" /> 3. Advertising & Google AdSense
         </h2>
         <p className="text-sm leading-relaxed">
-          GamesZone serves advertisements provided by third-party vendor networks, including Google AdSense, to support our free gaming platform.
+          Nexvara serves advertisements provided by third-party vendor networks, including Google AdSense, to support our free gaming platform.
         </p>
         <ul className="list-disc list-inside text-sm space-y-2 pl-4">
           <li>

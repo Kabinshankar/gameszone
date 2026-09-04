@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'GamesZone — Free Online Browser Games',
-    short_name: 'GamesZone',
+    name: 'Nexvara — Free Online Browser Games',
+    short_name: 'Nexvara',
     description: 'Play 20+ free online classic, arcade, puzzle, and card games in your browser. No download required.',
     start_url: '/',
     display: 'standalone',

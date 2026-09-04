@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
 /* ===================================================
-   GAMESZONE DESIGN SYSTEM
-   Dark futuristic gaming platform, restrained tokens
+   NEXVARA DESIGN SYSTEM v2.0
+   Dark futuristic gaming platform — premium edition
+   Techniques: Neon glow · 3D tilt · Glassmorphism
+   Shimmer FX · Score counter · Particle pulse
    =================================================== */
 
 :root {
@@ -331,6 +333,7 @@ h1, h2, h3, h4, h5, h6 {
   outline-offset: 2px;
 }
 
+
 /* ============ REDUCED MOTION ============ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -338,4 +341,311 @@ h1, h2, h3, h4, h5, h6 {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* =====================================================
+   NEXVARA ADVANCED GAME DESIGN ANIMATIONS v2.0
+   Based on: game UI design patterns, neon aesthetics,
+   glassmorphism, micro-interactions research
+   ===================================================== */
+
+/* ─── Neon Glow Pulse (for buttons, badges, active states) ─── */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 4px rgba(99, 102, 241, 0.4),
+      0 0 12px rgba(99, 102, 241, 0.2),
+      0 0 24px rgba(99, 102, 241, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 8px rgba(99, 102, 241, 0.7),
+      0 0 20px rgba(99, 102, 241, 0.4),
+      0 0 40px rgba(99, 102, 241, 0.2);
+  }
+}
+
+@keyframes neon-pulse-amber {
+  0%, 100% {
+    box-shadow:
+      0 0 4px rgba(245, 158, 11, 0.4),
+      0 0 12px rgba(245, 158, 11, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 10px rgba(245, 158, 11, 0.8),
+      0 0 24px rgba(245, 158, 11, 0.4),
+      0 0 48px rgba(245, 158, 11, 0.2);
+  }
+}
+
+@keyframes neon-pulse-emerald {
+  0%, 100% {
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.3), 0 0 14px rgba(16, 185, 129, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.7), 0 0 28px rgba(16, 185, 129, 0.35);
+  }
+}
+
+.neon-glow { animation: neon-pulse 2.5s ease-in-out infinite; }
+.neon-glow-amber { animation: neon-pulse-amber 2s ease-in-out infinite; }
+.neon-glow-emerald { animation: neon-pulse-emerald 2.2s ease-in-out infinite; }
+
+/* ─── Shimmer Sweep (for loading skeletons & premium card highlights) ─── */
+@keyframes shimmer-sweep {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 2s linear infinite;
+}
+
+/* ─── Score Counter Roll ─── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.score-animate {
+  animation: count-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ─── Coin Spin Reward Animation ─── */
+@keyframes coin-spin {
+  0% { transform: rotateY(0deg) scale(1); }
+  50% { transform: rotateY(180deg) scale(1.2); }
+  100% { transform: rotateY(360deg) scale(1); }
+}
+
+.coin-spin {
+  animation: coin-spin 0.6s ease-in-out;
+  display: inline-block;
+}
+
+/* ─── Achievement Unlock Pop ─── */
+@keyframes achievement-pop {
+  0% { transform: scale(0.5) translateY(20px); opacity: 0; }
+  60% { transform: scale(1.1) translateY(-4px); opacity: 1; }
+  80% { transform: scale(0.96) translateY(2px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.achievement-unlock {
+  animation: achievement-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ─── Particle Float ─── */
+@keyframes particle-float {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  50% { transform: translateY(-20px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particle-float 1.2s ease-out forwards;
+}
+
+/* ─── Heartbeat (for lives/health) ─── */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.12); }
+  70% { transform: scale(1); }
+}
+
+.heartbeat { animation: heartbeat 1.4s ease infinite; }
+
+/* ─── Winner Celebration Shimmer ─── */
+@keyframes winner-shimmer {
+  0% { background-position: -300% center; }
+  100% { background-position: 300% center; }
+}
+
+.winner-text {
+  background: linear-gradient(
+    90deg,
+    #6366f1 0%,
+    #a78bfa 25%,
+    #f59e0b 50%,
+    #a78bfa 75%,
+    #6366f1 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: winner-shimmer 2s linear infinite;
+}
+
+/* ─── Streak Fire Flicker ─── */
+@keyframes fire-flicker {
+  0%, 100% { transform: scaleY(1) rotate(-2deg); filter: brightness(1); }
+  25% { transform: scaleY(1.08) rotate(2deg); filter: brightness(1.2); }
+  50% { transform: scaleY(0.95) rotate(-1deg); filter: brightness(0.9); }
+  75% { transform: scaleY(1.05) rotate(1.5deg); filter: brightness(1.1); }
+}
+
+.fire-flicker { animation: fire-flicker 0.8s ease-in-out infinite; }
+
+/* ─── Glassmorphism Utility ─── */
+.glass {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ─── 3D Card Tilt (JS-powered via CSS vars) ─── */
+.card-3d {
+  transform-style: preserve-3d;
+  transform: perspective(1000px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  will-change: transform;
+}
+
+.card-3d:hover {
+  box-shadow:
+    0 20px 60px -10px rgba(0, 0, 0, 0.5),
+    0 0 30px rgba(99, 102, 241, 0.1);
+}
+
+/* ─── Difficulty Rarity Glow Borders ─── */
+.rarity-common { border-color: rgba(113, 113, 122, 0.4) !important; }
+.rarity-rare {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.15), inset 0 0 12px rgba(59, 130, 246, 0.05);
+}
+.rarity-epic {
+  border-color: rgba(168, 85, 247, 0.5) !important;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.2), inset 0 0 16px rgba(168, 85, 247, 0.08);
+}
+.rarity-legendary {
+  border-color: rgba(245, 158, 11, 0.6) !important;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.25), inset 0 0 20px rgba(245, 158, 11, 0.1);
+  animation: neon-pulse-amber 3s ease-in-out infinite;
+}
+
+/* ─── Difficulty Pill Badges ─── */
+.badge-easy { background: rgba(16, 185, 129, 0.12); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); }
+.badge-medium { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.25); }
+.badge-hard { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.25); }
+
+/* ─── Floating Elements ─── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.float { animation: float 3s ease-in-out infinite; }
+.float-slow { animation: float 5s ease-in-out infinite; }
+.float-delayed { animation: float 3s ease-in-out 1.5s infinite; }
+
+/* ─── Typing cursor blink ─── */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: '|';
+  animation: cursor-blink 1s step-end infinite;
+  margin-left: 2px;
+  color: var(--accent-primary);
+}
+
+/* ─── Game Board Entrance ─── */
+@keyframes board-entrance {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.board-entrance {
+  animation: board-entrance 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+
+/* ─── Slide In from Bottom (for toasts/cards) ─── */
+@keyframes slide-in-bottom {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-in-bottom {
+  animation: slide-in-bottom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ─── Leaderboard Row Highlight ─── */
+.rank-gold { background: linear-gradient(90deg, rgba(245, 158, 11, 0.12) 0%, transparent 100%); border-left: 2px solid #f59e0b; }
+.rank-silver { background: linear-gradient(90deg, rgba(148, 163, 184, 0.1) 0%, transparent 100%); border-left: 2px solid #94a3b8; }
+.rank-bronze { background: linear-gradient(90deg, rgba(180, 120, 60, 0.1) 0%, transparent 100%); border-left: 2px solid #b47c3c; }
+
+/* ─── Smooth page transitions ─── */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+main > * {
+  animation: page-in 0.3s ease forwards;
+}
+
+/* ─── Hover cursor glow effect (applied via JS) ─── */
+.cursor-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.cursor-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle 80px at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.08), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.cursor-glow:hover::before { opacity: 1; }
+
+/* ─── Coin shower from wins ─── */
+@keyframes coin-shower {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(80px) rotate(360deg); opacity: 0; }
+}
+
+.coin-shower-item {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: coin-shower 1s ease-in forwards;
 }

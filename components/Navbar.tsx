@@ -15,8 +15,8 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleUpdate = (e: any) => setProfile(e.detail || getCurrentProfile());
-    window.addEventListener('gameszone_profile_updated', handleUpdate);
-    return () => window.removeEventListener('gameszone_profile_updated', handleUpdate);
+    window.addEventListener('nexvara_profile_updated', handleUpdate);
+    return () => window.removeEventListener('nexvara_profile_updated', handleUpdate);
   }, []);
 
   const links = [
@@ -43,7 +43,7 @@ export default function Navbar() {
             <Gamepad2 className="w-5 h-5" />
           </div>
           <span className="text-[17px] font-bold tracking-tight text-white">
-            Games<span className="text-indigo-400">Zone</span>
+            Nex<span className="text-indigo-400">vara</span>
           </span>
         </Link>
 

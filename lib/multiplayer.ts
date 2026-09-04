@@ -21,6 +21,54 @@ export interface MultiplayerPeerInfo {
   title: string;
 }
 
+export interface GameModePreset {
+  id: string;
+  name: string;
+  desc: string;
+  icon: string;
+}
+
+export interface GameMultiplayerSettings {
+  modeId: string;
+  modeName: string;
+  timerSeconds: number; // 0 = unlimited, 10, 15, 30
+  rounds: number; // 1, 3, 5
+  stake: number; // 0, 50, 100
+}
+
+export const GAME_MULTIPLAYER_MODES: Record<string, GameModePreset[]> = {
+  'ludo': [
+    { id: 'classic', name: 'Classic 4-Tokens', desc: 'First to get all 4 tokens to Home wins the match.', icon: '👑' },
+    { id: 'quick', name: 'Quick Rush (1-Token)', desc: 'Fast-paced action: First to get 1 token to Home wins immediately!', icon: '⚡' },
+    { id: 'master', name: 'Master Showdown', desc: 'Must capture at least 1 opponent token before entering home lane.', icon: '⚔️' },
+  ],
+  'tic-tac-toe': [
+    { id: '3x3', name: 'Classic 3x3', desc: 'Traditional 3 in a row to win.', icon: '⭕' },
+    { id: '4x4', name: 'Grid 4x4 (4 in a row)', desc: 'Expanded 4x4 grid: Connect 4 in a row to win.', icon: '📐' },
+    { id: '5x5', name: 'Mega 5x5 (4 in a row)', desc: 'Strategic open arena: 4 in a row victory.', icon: '🌟' },
+  ],
+  'connect-four': [
+    { id: 'classic', name: 'Classic Connect 4', desc: 'Drop discs to connect 4 in a line.', icon: '🔴' },
+    { id: 'speed', name: 'Rapid Drop (10s)', desc: 'Fast Blitz mode with 10-second turn limit.', icon: '⚡' },
+  ],
+  'memory': [
+    { id: '12cards', name: '12 Cards (6 Pairs)', desc: 'Quick memory duel.', icon: '🃏' },
+    { id: '16cards', name: '16 Cards (8 Pairs)', desc: 'Standard memory arena.', icon: '🧠' },
+    { id: '24cards', name: '24 Cards (12 Pairs)', desc: 'Grandmaster challenge for memory masters.', icon: '💎' },
+  ],
+  'pong': [
+    { id: 'first_5', name: 'First to 5 Points', desc: 'Short sprint match.', icon: '🏓' },
+    { id: 'first_10', name: 'First to 10 Points', desc: 'Full championship duel.', icon: '🏆' },
+    { id: 'hyper', name: 'Hyper Speed Ball', desc: 'Ball accelerates faster with every rally!', icon: '🔥' },
+  ],
+};
+
+export const DEFAULT_MULTIPLAYER_MODES: GameModePreset[] = [
+  { id: 'standard', name: 'Standard Match', desc: 'Standard rules & regular pace.', icon: '🎮' },
+  { id: 'blitz', name: 'Blitz Rapid Mode', desc: 'Fast timer & high stakes intensity.', icon: '⚡' },
+  { id: 'championship', name: 'Championship Duel', desc: 'Extended rounds for true mastery.', icon: '🏆' },
+];
+
 export class MultiplayerRoom {
   private peer: any = null;
   private conn: any = null;
@@ -28,6 +76,13 @@ export class MultiplayerRoom {
   public isHost: boolean = false;
   public isConnected: boolean = false;
   public opponent: MultiplayerPeerInfo | null = null;
+  public settings: GameMultiplayerSettings = {
+    modeId: 'standard',
+    modeName: 'Standard Match',
+    timerSeconds: 30,
+    rounds: 3,
+    stake: 0,
+  };
   private localProfile: UserProfile;
   private onMessageCallback: (msg: MultiplayerMessage) => void;
   private onStatusChangeCallback: (status: 'waiting' | 'connected' | 'disconnected' | 'error', details?: string) => void;
@@ -35,11 +90,15 @@ export class MultiplayerRoom {
   constructor(
     localProfile: UserProfile,
     onMessage: (msg: MultiplayerMessage) => void,
-    onStatusChange: (status: 'waiting' | 'connected' | 'disconnected' | 'error', details?: string) => void
+    onStatusChange: (status: 'waiting' | 'connected' | 'disconnected' | 'error', details?: string) => void,
+    initialSettings?: GameMultiplayerSettings
   ) {
     this.localProfile = localProfile;
     this.onMessageCallback = onMessage;
     this.onStatusChangeCallback = onStatusChange;
+    if (initialSettings) {
+      this.settings = initialSettings;
+    }
   }
 
   // Load PeerJS dynamically on demand
@@ -134,13 +193,14 @@ export class MultiplayerRoom {
 
     conn.on('open', () => {
       this.isConnected = true;
-      // Send self profile handshake
+      // Send self profile handshake + room settings if host
       this.sendMessage('CONNECT', {
         id: this.localProfile.id,
         name: this.localProfile.username,
         avatar: this.localProfile.avatar,
         level: this.localProfile.level,
         title: this.localProfile.title,
+        settings: this.isHost ? this.settings : undefined,
       });
 
       this.onStatusChangeCallback('connected');
@@ -150,7 +210,17 @@ export class MultiplayerRoom {
       if (!data || !data.type) return;
 
       if (data.type === 'CONNECT') {
-        this.opponent = data.payload as MultiplayerPeerInfo;
+        const payload = data.payload;
+        this.opponent = {
+          id: payload.id,
+          name: payload.name,
+          avatar: payload.avatar,
+          level: payload.level,
+          title: payload.title,
+        };
+        if (payload.settings) {
+          this.settings = payload.settings;
+        }
         this.onStatusChangeCallback('connected', `Playing with ${this.opponent.name}`);
       }
 

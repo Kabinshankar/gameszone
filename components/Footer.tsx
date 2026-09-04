@@ -15,7 +15,7 @@ export default function Footer() {
                 <Gamepad2 className="w-4 h-4" />
               </div>
               <span className="text-[17px] font-bold text-white tracking-tight">
-                Games<span className="text-indigo-400">Zone</span>
+                Nex<span className="text-indigo-400">vara</span>
               </span>
             </Link>
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
@@ -52,7 +52,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="mt-12 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-zinc-500 font-medium">
-          <p>© 2026 GamesZone. All rights reserved.</p>
+          <p>© 2026 Nexvara. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/admin" className="hover:text-zinc-400 transition-colors">Admin Portal</Link>
             <span>•</span>

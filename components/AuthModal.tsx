@@ -80,7 +80,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             <Sparkles className="w-6 h-6" />
           </div>
           <h3 className="text-xl font-extrabold text-white tracking-tight">
-            {tab === 'signup' ? 'Create GamesZone Profile' : 'Welcome Back Gamer'}
+            {tab === 'signup' ? 'Create Nexvara Profile' : 'Welcome Back Gamer'}
           </h3>
           <p className="text-xs text-zinc-400 max-w-xs">
             {tab === 'signup'

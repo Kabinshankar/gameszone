@@ -32,8 +32,8 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   metadataBase: new URL('https://gameszonebynatsu.vercel.app'),
   title: {
-    default: 'GamesZone — Play Free Online Browser Games (No Download)',
-    template: '%s | GamesZone',
+    default: 'Nexvara — Play Free Online Browser Games (No Download)',
+    template: '%s | Nexvara',
   },
   description: 'Play 20+ free online games in your browser with zero downloads. Enjoy classic arcade, puzzle, card, board, and action games including Ludo, Tetris, Solitaire, Snake, 2048, Sudoku, Word Search, and Tic Tac Toe on mobile or PC.',
   keywords: [
@@ -60,24 +60,24 @@ export const metadata: Metadata = {
     'html5 games',
     'casual games'
   ],
-  authors: [{ name: 'GamesZone Team' }],
-  creator: 'GamesZone',
-  publisher: 'GamesZone',
-  applicationName: 'GamesZone',
+  authors: [{ name: 'Nexvara Team' }],
+  creator: 'Nexvara',
+  publisher: 'Nexvara',
+  applicationName: 'Nexvara',
   alternates: {
     canonical: 'https://gameszonebynatsu.vercel.app',
   },
   openGraph: {
-    title: 'GamesZone — Play Free Online Games (No Downloads)',
+    title: 'Nexvara — Play Free Online Games (No Downloads)',
     description: 'Instant play 20+ high quality online arcade, puzzle, card, and action games in your browser.',
     url: 'https://gameszonebynatsu.vercel.app',
-    siteName: 'GamesZone',
+    siteName: 'Nexvara',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'GamesZone — Play Free Online Browser Games',
+    title: 'Nexvara — Play Free Online Browser Games',
     description: 'Instant play 20+ free online arcade, puzzle, and card games in your browser. No downloads needed!',
   },
   robots: {
@@ -123,7 +123,7 @@ export default function RootLayout({
                   '@type': 'WebSite',
                   '@id': 'https://gameszonebynatsu.vercel.app/#website',
                   url: 'https://gameszonebynatsu.vercel.app',
-                  name: 'GamesZone',
+                  name: 'Nexvara',
                   description: 'Play 20+ free online browser games instantly with zero downloads required.',
                   potentialAction: {
                     '@type': 'SearchAction',
@@ -134,7 +134,7 @@ export default function RootLayout({
                 {
                   '@type': 'Organization',
                   '@id': 'https://gameszonebynatsu.vercel.app/#organization',
-                  name: 'GamesZone',
+                  name: 'Nexvara',
                   url: 'https://gameszonebynatsu.vercel.app',
                   logo: 'https://gameszonebynatsu.vercel.app/favicon.ico',
                 },

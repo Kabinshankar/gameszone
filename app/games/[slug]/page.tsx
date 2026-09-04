@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!game) {
     return {
-      title: 'Game Not Found | GamesZone',
+      title: 'Game Not Found | Nexvara',
     };
   }
 
@@ -44,15 +44,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       canonical: url,
     },
     openGraph: {
-      title: `${game.name} - Play Free Online on GamesZone`,
+      title: `${game.name} - Play Free Online on Nexvara`,
       description,
       url,
       type: 'website',
-      siteName: 'GamesZone',
+      siteName: 'Nexvara',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `Play ${game.name} Online Free | GamesZone`,
+      title: `Play ${game.name} Online Free | Nexvara`,
       description,
     },
   };

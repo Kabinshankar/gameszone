@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     canonical: 'https://gameszonebynatsu.vercel.app/games',
   },
   openGraph: {
-    title: 'All Free Online Games | GamesZone Arcade',
+    title: 'All Free Online Games | Nexvara Arcade',
     description: 'Explore 20+ free browser games with instant play. No downloads required.',
     url: 'https://gameszonebynatsu.vercel.app/games',
   },

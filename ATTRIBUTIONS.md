@@ -1,6 +1,6 @@
-# GamesZone — Attributions & Licensing
+# Nexvara — Attributions & Licensing
 
-GamesZone is built using modern open-source technologies, icons, and original browser game implementations.
+Nexvara is built using modern open-source technologies, icons, and original browser game implementations.
 
 ## Technologies & Frameworks
 
@@ -12,6 +12,6 @@ GamesZone is built using modern open-source technologies, icons, and original br
 
 ## Game Implementations
 
-All 15 browser games in GamesZone (Tic Tac Toe, Snake, 2048, Memory Card, Minesweeper, Rock Paper Scissors, Connect Four, Checkers, Sudoku, Flappy Rocket, Breakout, Pong, Whack-a-Mole, Reaction Test, and Ludo) are custom original TypeScript/React canvas and DOM implementations created specifically for GamesZone.
+All 15 browser games in Nexvara (Tic Tac Toe, Snake, 2048, Memory Card, Minesweeper, Rock Paper Scissors, Connect Four, Checkers, Sudoku, Flappy Rocket, Breakout, Pong, Whack-a-Mole, Reaction Test, and Ludo) are custom original TypeScript/React canvas and DOM implementations created specifically for Nexvara.
 
 No copyrighted artwork, proprietary assets, or trademarked media files from commercial entities were used or copied.

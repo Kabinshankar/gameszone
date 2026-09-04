@@ -3,9 +3,9 @@ import { ShieldCheck, Zap, Smartphone, Sparkles, HelpCircle } from 'lucide-react
 
 const FAQS = [
   {
-    question: 'Are all games on GamesZone completely free to play?',
+    question: 'Are all games on Nexvara completely free to play?',
     answer:
-      'Yes! Every single game on GamesZone is 100% free to play. There are no paywalls, subscriptions, or hidden charges. You can enjoy unlimited gameplay directly in your browser.',
+      'Yes! Every single game on Nexvara is 100% free to play. There are no paywalls, subscriptions, or hidden charges. You can enjoy unlimited gameplay directly in your browser.',
   },
   {
     question: 'Do I need to download or install any files to play?',
@@ -13,17 +13,17 @@ const FAQS = [
       'No downloads or installations are required. All games run instantly in your web browser using modern HTML5 and WebAssembly technology across desktop, laptop, tablet, and mobile devices.',
   },
   {
-    question: 'What types of online games can I find on GamesZone?',
+    question: 'What types of online games can I find on Nexvara?',
     answer:
-      'GamesZone features a diverse catalog of 20+ top-rated casual titles including classic board games (Ludo, Checkers, Tic Tac Toe), brain puzzles (Sudoku, 2048, Minesweeper, Word Search), arcade favorites (Snake, Breakout, Pong, Flappy Rocket, Whack-A-Mole, Tetris), card games (Solitaire), and reflex skill testers (Typing Test, Reaction Test, Color Match).',
+      'Nexvara features a diverse catalog of 20+ top-rated casual titles including classic board games (Ludo, Checkers, Tic Tac Toe), brain puzzles (Sudoku, 2048, Minesweeper, Word Search), arcade favorites (Snake, Breakout, Pong, Flappy Rocket, Whack-A-Mole, Tetris), card games (Solitaire), and reflex skill testers (Typing Test, Reaction Test, Color Match).',
   },
   {
-    question: 'Are GamesZone games playable on mobile phones and tablets?',
+    question: 'Are Nexvara games playable on mobile phones and tablets?',
     answer:
-      'Yes! GamesZone is fully optimized with responsive touch controls for iOS (iPhone/iPad) and Android smartphones and tablets.',
+      'Yes! Nexvara is fully optimized with responsive touch controls for iOS (iPhone/iPad) and Android smartphones and tablets.',
   },
   {
-    question: 'Does GamesZone save my game progress and high scores?',
+    question: 'Does Nexvara save my game progress and high scores?',
     answer:
       'Yes, your high scores, win streaks, and recent game history are automatically saved safely in your browser local storage so you can always continue where you left off.',
   },
@@ -88,7 +88,7 @@ export default function SeoContentSection() {
       <div className="p-8 rounded-3xl bg-[#0f0f15] border border-white/10 flex flex-col gap-6 text-zinc-300">
         <div className="flex flex-col gap-2">
           <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> About GamesZone
+            <Sparkles className="w-3.5 h-3.5" /> About Nexvara
           </span>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
             Play The Best Free Online Games Without Downloading
@@ -97,7 +97,7 @@ export default function SeoContentSection() {
 
         <div className="text-sm leading-relaxed text-zinc-400 space-y-4">
           <p>
-            Welcome to <strong className="text-white">GamesZone</strong>, your premier destination for free online browser games. Whether you are looking for classic brain teasers, nostalgic arcade favorites, fast-paced reflex challenges, or card and board games to play with friends, GamesZone delivers high-performance web gaming with zero friction.
+            Welcome to <strong className="text-white">Nexvara</strong>, your premier destination for free online browser games. Whether you are looking for classic brain teasers, nostalgic arcade favorites, fast-paced reflex challenges, or card and board games to play with friends, Nexvara delivers high-performance web gaming with zero friction.
           </p>
           <p>
             Our library includes player-favorite titles like <strong className="text-zinc-200">Classic Ludo</strong>, <strong className="text-zinc-200">Tetris</strong>, <strong className="text-zinc-200">Solitaire (Klondike)</strong>, <strong className="text-zinc-200">Snake</strong>, <strong className="text-zinc-200">2048 Puzzle</strong>, <strong className="text-zinc-200">Sudoku Master</strong>, <strong className="text-zinc-200">Minesweeper</strong>, and <strong className="text-zinc-200">Word Search</strong>. Every game is built with lightweight, cutting-edge HTML5 technologies ensuring rapid load times and fluid 60 FPS performance even on low-bandwidth connections.
