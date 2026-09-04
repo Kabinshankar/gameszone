@@ -497,67 +497,152 @@ export default function Ludo() {
     setStatusMessage('New Game started. Red player rolls first!');
   };
 
-  // Render authentic 3D Dice with pips
-  const renderDiceFace = (value: number | null, customClass?: string) => {
+  // Render authentic 3D Dice with pips in player theme
+  const renderDiceFace = (value: number | null, color: PlayerColor, customClass?: string) => {
     const val = value || 1;
-    const canRoll = !hasRolled && !isRolling && !movingTokenId && !winner;
+    const isTurn = currentColor === color;
+    const isThisRolling = isRolling && isTurn;
+
+    // Dice styling matching player color
+    const isYellow = color === 'yellow';
+    const isGreen = color === 'green';
+    const isRed = color === 'red';
+    const isBlue = color === 'blue';
+
+    const diceBgStyle = isGreen
+      ? 'bg-gradient-to-br from-emerald-400 via-emerald-600 to-green-800 text-white'
+      : isRed
+      ? 'bg-gradient-to-br from-rose-400 via-red-600 to-rose-800 text-white'
+      : isYellow
+      ? 'bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-600 text-slate-900'
+      : 'bg-gradient-to-br from-blue-400 via-blue-600 to-indigo-800 text-white';
+
+    const pipColor = isYellow ? 'bg-slate-950' : 'bg-white';
 
     return (
       <div
-        className={`rounded-2xl bg-white border-2 border-slate-300 shadow-2xl flex items-center justify-center p-1.5 sm:p-2 transition-all duration-300 ${
-          customClass || 'w-12 h-12 sm:w-14 sm:h-14'
+        className={`rounded-2xl ${diceBgStyle} border-2 border-white/60 shadow-2xl flex items-center justify-center p-1.5 sm:p-2 transition-all duration-300 ${
+          customClass || 'w-11 h-11 sm:w-14 sm:h-14'
         } ${
-          isRolling
-            ? 'rotate-[720deg] scale-110 animate-spin'
-            : canRoll
-            ? 'hover:scale-110 active:scale-95 animate-pulse'
-            : ''
+          isThisRolling
+            ? 'rotate-[720deg] scale-110 animate-spin shadow-[0_0_25px_rgba(255,255,255,0.8)]'
+            : isTurn && !hasRolled
+            ? 'animate-pulse scale-105 ring-4 ring-white shadow-[0_0_20px_rgba(255,255,255,0.6)]'
+            : 'opacity-90'
         }`}
         style={{
-          boxShadow: '0 8px 16px rgba(0,0,0,0.35), inset 0 2px 4px rgba(255,255,255,0.9), inset 0 -3px 6px rgba(0,0,0,0.15)',
+          boxShadow: isTurn
+            ? '0 10px 25px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -3px 6px rgba(0,0,0,0.3)'
+            : '0 4px 10px rgba(0,0,0,0.25)',
         }}
       >
         <div className="grid grid-cols-3 grid-rows-3 w-full h-full gap-0.5 sm:gap-1 items-center justify-items-center">
           {/* Pip 1 (top-left) */}
-          {[2, 3, 4, 5, 6].includes(val) ? <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-900" /> : <span />}
+          {[2, 3, 4, 5, 6].includes(val) ? <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pipColor}`} /> : <span />}
           {/* Pip 2 (top-center) */}
           <span />
           {/* Pip 3 (top-right) */}
-          {[4, 5, 6].includes(val) ? <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-900" /> : <span />}
+          {[4, 5, 6].includes(val) ? <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pipColor}`} /> : <span />}
           {/* Pip 4 (mid-left) */}
-          {[6].includes(val) ? <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-900" /> : <span />}
+          {[6].includes(val) ? <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pipColor}`} /> : <span />}
           {/* Center pip */}
           {[1, 3, 5].includes(val) ? (
-            <span className={`rounded-full ${val === 1 ? 'w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-[#EF3340]' : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-slate-900'}`} />
+            <span className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${isYellow ? 'bg-rose-600' : 'bg-white'}`} />
           ) : (
             <span />
           )}
           {/* Pip 6 (mid-right) */}
-          {[6].includes(val) ? <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-900" /> : <span />}
+          {[6].includes(val) ? <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pipColor}`} /> : <span />}
           {/* Pip 7 (bottom-left) */}
-          {[4, 5, 6].includes(val) ? <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-900" /> : <span />}
+          {[4, 5, 6].includes(val) ? <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pipColor}`} /> : <span />}
           {/* Pip 8 (bottom-center) */}
           <span />
           {/* Pip 9 (bottom-right) */}
-          {[2, 3, 4, 5, 6].includes(val) ? <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-900" /> : <span />}
+          {[2, 3, 4, 5, 6].includes(val) ? <span className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${pipColor}`} /> : <span />}
         </div>
       </div>
     );
   };
 
   const isCurrentBot = mode === 'vs-bot' && currentColor !== 'red';
-  const canRollNow = !hasRolled && !isRolling && !movingTokenId && !winner && !isCurrentBot;
 
-  const renderYardContent = (color: PlayerColor) => {
+  // Dedicated Player Banner & Dice Box (Exactly like Ludo King screenshot)
+  const renderPlayerDiceArea = (color: PlayerColor, position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right') => {
     const isTurn = currentColor === color;
+    const isColorActive = activePlayers.includes(color);
     const isBot = mode === 'vs-bot' && color !== 'red';
     const canRoll = isTurn && !hasRolled && !isRolling && !movingTokenId && !winner && !isBot;
-    const isColorActive = activePlayers.includes(color);
 
+    const pName = color === 'red' ? 'Player 1' : color === 'green' ? 'Player 2' : color === 'yellow' ? 'Player 3' : 'Player 4';
+
+    const isTop = position.startsWith('top');
+    const isLeft = position.endsWith('left');
+
+    return (
+      <div
+        className={`flex items-center gap-2 p-1.5 sm:p-2 rounded-2xl transition-all duration-300 ${
+          isTurn
+            ? 'scale-102 shadow-xl ring-2 ring-white/80'
+            : 'opacity-80'
+        }`}
+        style={{ backgroundColor: PLAYER_COLORS[color].primary }}
+      >
+        {/* Dice box on left if right-aligned or on right if left-aligned */}
+        {!isLeft && isColorActive && (
+          <button
+            onClick={rollDice}
+            disabled={!canRoll}
+            aria-label={`Roll ${PLAYER_COLORS[color].name} Dice`}
+            className={`relative rounded-2xl p-1 bg-white/20 border-2 border-white/50 transition-transform ${
+              isTurn ? 'scale-105 cursor-pointer hover:scale-110 active:scale-95' : 'cursor-default opacity-70'
+            }`}
+          >
+            {renderDiceFace(isTurn ? diceValue : 1, color, 'w-10 h-10 sm:w-12 sm:h-12')}
+            {isTurn && !hasRolled && !isRolling && (
+              <span className="absolute -top-2 -right-2 text-[8px] bg-white text-slate-900 font-black px-1.5 py-0.5 rounded-full shadow-md animate-bounce">
+                {isBot ? 'BOT' : 'ROLL'}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Player Name & Tag */}
+        <div className={`flex flex-col ${isLeft ? 'text-left' : 'text-right'} min-w-[70px] sm:min-w-[90px]`}>
+          <span className="text-xs sm:text-sm font-black text-white truncate drop-shadow-sm">
+            {pName} {color === 'red' && mode === 'vs-bot' ? '(You)' : ''}
+          </span>
+          <span className="text-[10px] sm:text-[11px] font-bold text-white/90">
+            {isTurn ? (isRolling ? 'Rolling...' : hasRolled ? `Rolled ${diceValue}` : isBot ? 'Bot Turn' : 'Your Turn!') : isColorActive ? (isBot ? 'Bot' : 'Waiting') : 'Inactive'}
+          </span>
+        </div>
+
+        {/* Dice box on right if left-aligned */}
+        {isLeft && isColorActive && (
+          <button
+            onClick={rollDice}
+            disabled={!canRoll}
+            aria-label={`Roll ${PLAYER_COLORS[color].name} Dice`}
+            className={`relative rounded-2xl p-1 bg-white/20 border-2 border-white/50 transition-transform ${
+              isTurn ? 'scale-105 cursor-pointer hover:scale-110 active:scale-95' : 'cursor-default opacity-70'
+            }`}
+          >
+            {renderDiceFace(isTurn ? diceValue : 1, color, 'w-10 h-10 sm:w-12 sm:h-12')}
+            {isTurn && !hasRolled && !isRolling && (
+              <span className="absolute -top-2 -right-2 text-[8px] bg-white text-slate-900 font-black px-1.5 py-0.5 rounded-full shadow-md animate-bounce">
+                {isBot ? 'BOT' : 'ROLL'}
+              </span>
+            )}
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const renderYardContent = (color: PlayerColor) => {
     return (
       <div className="relative w-full h-full bg-white rounded-2xl border-2 border-slate-900 flex items-center justify-center shadow-inner overflow-hidden">
         {/* 4 Corner Pockets for Tokens in Yard */}
-        <div className="w-full h-full grid grid-cols-2 grid-rows-2 p-1.5 sm:p-2 gap-1.5 sm:gap-2">
+        <div className="w-full h-full grid grid-cols-2 grid-rows-2 p-2 sm:p-2.5 gap-2 sm:gap-2.5">
           {YARD_POCKETS[color].map((_, idx) => (
             <div
               key={idx}
@@ -570,40 +655,6 @@ export default function Ludo() {
             />
           ))}
         </div>
-
-        {/* Dynamic Turn Dice Hub - Appears ONLY when it is this color's turn */}
-        {isTurn && isColorActive && !winner && (
-          <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex flex-col items-center justify-center p-1 z-25 animate-in zoom-in-90 duration-200">
-            <button
-              onClick={rollDice}
-              disabled={!canRoll}
-              aria-label={`Roll ${PLAYER_COLORS[color].name} Dice`}
-              className={`flex flex-col items-center justify-center transition-all ${
-                canRoll ? 'cursor-pointer hover:scale-110 active:scale-95' : 'cursor-default'
-              }`}
-            >
-              {renderDiceFace(diceValue, 'w-10 h-10 sm:w-13 sm:h-13')}
-              <span
-                className="mt-1 text-[7px] sm:text-[9px] font-black uppercase tracking-wider text-white px-2 py-0.5 rounded-full shadow-lg whitespace-nowrap animate-bounce border border-white/60"
-                style={{ backgroundColor: PLAYER_COLORS[color].primary }}
-              >
-                {isRolling ? 'ROLLING...' : hasRolled ? `ROLLED ${diceValue}` : isBot ? 'BOT...' : 'TAP TO ROLL'}
-              </span>
-            </button>
-          </div>
-        )}
-
-        {/* Inactive Player Label Badge when not their turn */}
-        {(!isTurn || !isColorActive) && (
-          <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-            <div
-              className="px-2 py-0.5 rounded-full text-[8px] sm:text-[10px] font-black text-white uppercase tracking-wider shadow-md opacity-85 border border-white/40"
-              style={{ backgroundColor: PLAYER_COLORS[color].primary }}
-            >
-              {PLAYER_COLORS[color].name}
-            </div>
-          </div>
-        )}
       </div>
     );
   };
@@ -666,45 +717,10 @@ export default function Ludo() {
         </div>
       </div>
 
-      {/* Turn Status & Dice Console */}
-      <div className="w-full bg-white/[0.04] border border-white/10 p-3 sm:p-4 rounded-2xl flex items-center justify-between shadow-lg">
-        {/* Active Player Badge */}
-        <div className="flex items-center gap-3">
-          <div
-            className="w-5 h-5 rounded-full shadow-lg ring-2 ring-white/80 animate-pulse"
-            style={{ backgroundColor: PLAYER_COLORS[currentColor].primary }}
-          />
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-sm font-black text-white capitalize">
-                {PLAYER_COLORS[currentColor].name} Turn
-              </span>
-              {isCurrentBot && (
-                <span className="text-[10px] bg-white/10 text-cyan-300 font-bold px-1.5 py-0.5 rounded">
-                  BOT
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-gray-400 truncate max-w-[180px] sm:max-w-xs">{statusMessage}</p>
-          </div>
-        </div>
-
-        {/* Header Roll / Status Button */}
-        <button
-          onClick={rollDice}
-          disabled={!canRollNow}
-          aria-label="Roll Dice"
-          className={`flex items-center gap-2 px-3.5 py-2 rounded-xl border text-xs font-bold transition-all ${
-            canRollNow
-              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 border-purple-400/40 text-white shadow-lg shadow-purple-500/25 hover:scale-105 active:scale-95 cursor-pointer animate-pulse'
-              : 'bg-white/5 border-white/10 text-gray-300 cursor-default'
-          }`}
-        >
-          <span className="text-sm">🎲</span>
-          <span className="uppercase tracking-wider">
-            {isRolling ? 'Rolling...' : hasRolled ? `Rolled ${diceValue}` : isCurrentBot ? 'Bot Rolling...' : 'Roll Dice'}
-          </span>
-        </button>
+      {/* Top Players Row: Red (Top-Left) & Green (Top-Right) */}
+      <div className="w-full max-w-[580px] grid grid-cols-2 gap-3 sm:gap-4 items-center">
+        {renderPlayerDiceArea('red', 'top-left')}
+        {renderPlayerDiceArea('green', 'top-right')}
       </div>
 
       {/* 15x15 Authentic Ludo Board Container */}
@@ -942,9 +958,15 @@ export default function Ludo() {
         )}
       </div>
 
+      {/* Bottom Players Row: Blue (Bottom-Left) & Yellow (Bottom-Right) */}
+      <div className="w-full max-w-[580px] grid grid-cols-2 gap-3 sm:gap-4 items-center">
+        {renderPlayerDiceArea('blue', 'bottom-left')}
+        {renderPlayerDiceArea('yellow', 'bottom-right')}
+      </div>
+
       {/* Instructions helper */}
-      <p className="text-xs text-gray-500 text-center">
-        💡 Tap the <strong className="text-gray-300">dice inside your corner yard</strong> when your turn arrives to roll • Roll a <strong className="text-gray-300">6</strong> to exit yard • Safe on stars ⭐
+      <p className="text-xs text-gray-400 text-center">
+        💡 Tap your <strong className="text-white">Player Dice Box</strong> when your turn arrives to roll • Roll a <strong className="text-white">6</strong> to exit yard • Safe on stars ⭐
       </p>
 
     </div>
