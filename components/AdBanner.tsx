@@ -41,9 +41,9 @@ export default function AdBanner({
           data-ad-format={format}
           data-full-width-responsive={responsive ? 'true' : 'false'}
         />
-        {/* Dev placeholder */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="text-[11px] text-zinc-600 font-mono">
+        {/* Fallback placeholder (hidden behind filled ads) */}
+        <div className="absolute inset-0 -z-10 flex items-center justify-center pointer-events-none">
+          <span className="text-[11px] text-zinc-600/60 font-mono">
             Ad Space
           </span>
         </div>
