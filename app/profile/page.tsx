@@ -14,6 +14,9 @@ import {
   SHOP_TITLES,
   equipItem,
   UserProfile,
+  DAILY_REWARDS,
+  canClaimDailyReward,
+  claimDailyReward,
 } from '@/lib/profile';
 import { sound } from '@/lib/audio';
 
@@ -204,6 +207,76 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Daily Login Rewards Calendar Section */}
+      <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 flex flex-col gap-5 shadow-xl relative overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-xl text-amber-400 shadow-md">
+              🎁
+            </div>
+            <div>
+              <h2 className="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                Daily Login Rewards
+                <span className="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  {profile.dailyStreak} Day Streak 🔥
+                </span>
+              </h2>
+              <p className="text-xs text-zinc-400">
+                Log in every day to claim bonus reward coins and XP. Reach Day 7 for the VIP 500 🪙 drop!
+              </p>
+            </div>
+          </div>
+
+          {canClaimDailyReward(profile.lastDailyReward) ? (
+            <button
+              onClick={() => {
+                const res = claimDailyReward();
+                if (res.success) {
+                  sound.playWin();
+                }
+              }}
+              className="px-6 py-3 rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black text-xs font-black tracking-wide shadow-lg shadow-amber-500/30 flex items-center justify-center gap-2 transition-transform active:scale-95 cursor-pointer animate-bounce shrink-0"
+            >
+              <Coins className="w-4 h-4" /> Claim Daily Gift Now!
+            </button>
+          ) : (
+            <div className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-zinc-400 text-xs font-bold flex items-center gap-2 shrink-0">
+              <Check className="w-4 h-4 text-emerald-400" /> Claimed Today (Returns Tomorrow)
+            </div>
+          )}
+        </div>
+
+        {/* 7-Day Rewards Track */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 pt-2">
+          {DAILY_REWARDS.map((r) => {
+            const isCompleted = profile.dailyStreak >= r.day;
+            const isCurrent = profile.dailyStreak === r.day;
+            return (
+              <div
+                key={r.day}
+                className={`p-3.5 rounded-2xl border flex flex-col items-center gap-1.5 transition-all relative ${
+                  isCurrent
+                    ? 'bg-amber-500/15 border-amber-400 shadow-md shadow-amber-500/20 scale-102 ring-1 ring-amber-400'
+                    : isCompleted
+                    ? 'bg-emerald-500/10 border-emerald-500/30'
+                    : 'bg-white/5 border-white/10 opacity-70'
+                }`}
+              >
+                <span className="text-2xl">{r.icon}</span>
+                <span className="text-xs font-extrabold text-white">{r.label}</span>
+                <span className="text-[11px] font-mono font-bold text-amber-300">+{r.coins} 🪙</span>
+                <span className="text-[9px] text-zinc-400 font-semibold">+{r.xp} XP</span>
+                {isCompleted && (
+                  <span className="absolute top-2 right-2 text-[10px] text-emerald-400 font-bold">
+                    ✓
+                  </span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Owned Inventory & Customizer */}
       <section className="p-6 sm:p-8 rounded-3xl bg-[#121218] border border-white/10 flex flex-col gap-6 shadow-xl">

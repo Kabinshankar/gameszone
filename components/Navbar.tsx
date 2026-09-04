@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Gamepad2, Search, Heart, LayoutGrid, Home, Menu, X, ShoppingBag, User, Coins } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import SoundToggle from './SoundToggle';
 import { getCurrentProfile, SHOP_AVATARS, SHOP_FRAMES, UserProfile } from '@/lib/profile';
 
 export default function Navbar() {
@@ -94,6 +95,7 @@ export default function Navbar() {
             <Search className="w-4 h-4" />
           </Link>
 
+          <SoundToggle />
           <ThemeToggle />
 
           {/* Profile Button with Avatar & Level */}
@@ -128,6 +130,7 @@ export default function Navbar() {
             {currentAvatar.icon}
           </Link>
 
+          <SoundToggle />
           <ThemeToggle />
 
           <button

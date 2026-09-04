@@ -157,6 +157,82 @@ export function saveProfile(profile: UserProfile): void {
   }
 }
 
+// ── DAILY LOGIN REWARDS ────────────────────────────────────────────
+
+export const DAILY_REWARDS = [
+  { day: 1, coins: 50, xp: 50, icon: '🪙', label: 'Day 1' },
+  { day: 2, coins: 75, xp: 75, icon: '🪙', label: 'Day 2' },
+  { day: 3, coins: 100, xp: 100, icon: '💎', label: 'Day 3' },
+  { day: 4, coins: 150, xp: 150, icon: '⚡', label: 'Day 4' },
+  { day: 5, coins: 200, xp: 200, icon: '🔥', label: 'Day 5' },
+  { day: 6, coins: 300, xp: 300, icon: '🌟', label: 'Day 6' },
+  { day: 7, coins: 500, xp: 500, icon: '👑', label: 'Day 7 VIP' },
+];
+
+export function canClaimDailyReward(lastDateIso?: string): boolean {
+  if (!lastDateIso) return true;
+  const last = new Date(lastDateIso);
+  const now = new Date();
+  return (
+    now.getFullYear() !== last.getFullYear() ||
+    now.getMonth() !== last.getMonth() ||
+    now.getDate() !== last.getDate()
+  );
+}
+
+export function claimDailyReward(): {
+  success: boolean;
+  message: string;
+  coinsEarned?: number;
+  xpEarned?: number;
+  streak?: number;
+} {
+  const profile = getCurrentProfile();
+  if (!canClaimDailyReward(profile.lastDailyReward)) {
+    return { success: false, message: 'You have already claimed today\'s daily bonus! Come back tomorrow.' };
+  }
+
+  const last = profile.lastDailyReward ? new Date(profile.lastDailyReward) : null;
+  const now = new Date();
+
+  let newStreak = profile.dailyStreak || 0;
+  if (last) {
+    const diffHours = (now.getTime() - last.getTime()) / (1000 * 60 * 60);
+    if (diffHours < 48) {
+      newStreak = (newStreak % 7) + 1;
+    } else {
+      newStreak = 1;
+    }
+  } else {
+    newStreak = 1;
+  }
+
+  const rewardIndex = (newStreak - 1) % DAILY_REWARDS.length;
+  const reward = DAILY_REWARDS[rewardIndex];
+
+  const newXP = profile.xp + reward.xp;
+  const newLevel = calculateLevel(newXP);
+
+  const updated: UserProfile = {
+    ...profile,
+    coins: profile.coins + reward.coins,
+    xp: newXP,
+    level: newLevel,
+    dailyStreak: newStreak,
+    lastDailyReward: now.toISOString(),
+  };
+
+  saveProfile(updated);
+
+  return {
+    success: true,
+    message: `Claimed Day ${newStreak} Reward: +${reward.coins} Coins & +${reward.xp} XP!`,
+    coinsEarned: reward.coins,
+    xpEarned: reward.xp,
+    streak: newStreak,
+  };
+}
+
 // ── REWARD LOGIC ───────────────────────────────────────────────────
 
 export function calculateLevel(xp: number): number {
