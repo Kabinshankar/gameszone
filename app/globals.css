@@ -1,0 +1,234 @@
+@import "tailwindcss";
+
+/* ===================================================
+   GAMESZONE DESIGN SYSTEM
+   Dark futuristic gaming platform, restrained tokens
+   =================================================== */
+
+:root {
+  /* Backgrounds */
+  --bg-base: #09090b;
+  --bg-surface: #111116;
+  --bg-card: #16161c;
+  --bg-elevated: #1e1e26;
+
+  /* Borders */
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --border-hover: rgba(99, 102, 241, 0.4);
+
+  /* Primary & Secondary Accents */
+  --accent-primary: #6366f1;
+  --accent-primary-hover: #4f46e5;
+  --accent-primary-muted: rgba(99, 102, 241, 0.14);
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  /* Text Colors */
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-faint: #52525b;
+
+  /* Radius Tokens */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+/* ================= LIGHT MODE TOKENS & OVERRIDES ================= */
+.light {
+  --bg-base: #f8fafc;
+  --bg-surface: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-elevated: #ffffff;
+
+  --border-default: #e2e8f0;
+  --border-subtle: #cbd5e1;
+
+  --accent-primary: #4f46e5;
+  --accent-primary-hover: #4338ca;
+  --accent-primary-muted: rgba(79, 70, 229, 0.08);
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+}
+
+.light body {
+  background-color: var(--bg-base) !important;
+  color: var(--text-primary) !important;
+}
+
+.light header,
+.light nav,
+.light footer {
+  background-color: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+}
+
+.light h1, .light h2, .light h3, .light h4, .light h5, .light h6,
+.light .text-white,
+.light .text-zinc-100,
+.light .text-zinc-200 {
+  color: #0f172a !important;
+}
+
+.light .text-zinc-300,
+.light .text-zinc-400 {
+  color: #334155 !important;
+}
+
+.light .text-zinc-500 {
+  color: #64748b !important;
+}
+
+.light .text-zinc-600 {
+  color: #94a3b8 !important;
+}
+
+.light .bg-zinc-900,
+.light .bg-zinc-950,
+.light div[class*="bg-zinc"],
+.light section[class*="bg-zinc"] {
+  background-color: #ffffff !important;
+}
+
+.light input,
+.light select {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light .border-zinc-800,
+.light .border-zinc-700 {
+  border-color: #e2e8f0 !important;
+}
+
+.light .bg-indigo-600,
+.light .bg-indigo-600 * {
+  color: #ffffff !important;
+}
+
+/* ============ BASE RESET ============ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============ TYPOGRAPHY ============ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-plus-jakarta), var(--font-inter), system-ui, sans-serif;
+  color: var(--text-primary);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+/* ============ UTILITY CLASSES ============ */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
+  color: #ffffff;
+  font-weight: 700;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  transition: all 180ms ease;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: linear-gradient(180deg, #818cf8 0%, #6366f1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-weight: 600;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all 180ms ease;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.card-interactive {
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+}
+.card-interactive:hover {
+  transform: translateY(-3px);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.08);
+}
+
+/* ============ SCROLLBAR ============ */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+/* ============ FOCUS ============ */
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* ============ REDUCED MOTION ============ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
